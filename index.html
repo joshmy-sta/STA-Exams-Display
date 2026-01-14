@@ -50,8 +50,6 @@
         const Trash2 = (p) => (<IconWrapper {...p}><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"/></IconWrapper>);
         const Maximize = (p) => (<IconWrapper {...p}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></IconWrapper>);
         const Minimize = (p) => (<IconWrapper {...p}><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></IconWrapper>);
-        
-        // Multi-path icons wrapped in Fragment <></> to fix Babel syntax error
         const AlertCircle = (p) => (<IconWrapper {...p}><React.Fragment><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></React.Fragment></IconWrapper>);
         const Clock = (p) => (<IconWrapper {...p}><React.Fragment><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></React.Fragment></IconWrapper>);
         const Bell = (p) => (<IconWrapper {...p}><React.Fragment><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></React.Fragment></IconWrapper>);
@@ -64,18 +62,31 @@
         const ChevronUp = (p) => (<IconWrapper {...p}><polyline points="18 15 12 9 6 15"/></IconWrapper>);
 
         const ExamClockApp = () => {
+          // --- PERSISTENCE HELPER ---
+          // Load state from local storage or use default
+          const loadState = (key, defaultValue) => {
+            try {
+              const saved = localStorage.getItem(key);
+              return saved ? JSON.parse(saved) : defaultValue;
+            } catch (e) {
+              console.warn("Failed to load from local storage", e);
+              return defaultValue;
+            }
+          };
+
           // --- STATE ---
           const [currentTime, setCurrentTime] = useState(new Date());
           const [isSetupMode, setIsSetupMode] = useState(true);
           const [isFullscreen, setIsFullscreen] = useState(false);
-          const [centerName, setCenterName] = useState("MOCK EXAMINATION WEEK");
           const [activeDayId, setActiveDayId] = useState(1);
           const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
           const [bulkText, setBulkText] = useState("");
           const [importStatus, setImportStatus] = useState("");
 
-          // --- INITIAL DATA ---
-          const [schedule, setSchedule] = useState([
+          // Persisted States
+          const [centerName, setCenterName] = useState(() => loadState('examCenterName', "MOCK EXAMINATION WEEK"));
+          const [logoUrl, setLogoUrl] = useState(() => loadState('examLogoUrl', "https://img.icons8.com/color/96/school.png"));
+          const [schedule, setSchedule] = useState(() => loadState('examSchedule', [
             {
               id: 1, name: "Day 1", exams: [
                 { id: 101, subject: "Biology/Chemistry/Physics/SEHS HL P2", startTime: "08:15", duration: 150, readingTime: 5, hasReadingTime: true, isHidden: false },
@@ -85,12 +96,18 @@
               ]
             },
             { id: 2, name: "Day 2", exams: [] }
-          ]);
+          ]));
 
+          // --- EFFECTS ---
           useEffect(() => {
             const timer = setInterval(() => setCurrentTime(new Date()), 1000);
             return () => clearInterval(timer);
           }, []);
+
+          // Save to LocalStorage whenever these change
+          useEffect(() => { localStorage.setItem('examCenterName', JSON.stringify(centerName)); }, [centerName]);
+          useEffect(() => { localStorage.setItem('examLogoUrl', JSON.stringify(logoUrl)); }, [logoUrl]);
+          useEffect(() => { localStorage.setItem('examSchedule', JSON.stringify(schedule)); }, [schedule]);
 
           // --- HELPERS ---
           const formatTime = (date) => date.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -224,6 +241,8 @@
                         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                           <h2 className="text-sm font-bold uppercase text-gray-500 mb-3 tracking-wider">Global Title</h2>
                           <input type="text" value={centerName} onChange={(e) => setCenterName(e.target.value)} className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                          <label className="block text-xs font-bold text-gray-500 uppercase mt-3 mb-1">Logo URL (Optional)</label>
+                          <input type="text" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} className="w-full p-2 border border-gray-300 rounded text-sm outline-none" placeholder="https://..." />
                         </div>
                         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                           <div className="flex justify-between items-center mb-3">
@@ -305,8 +324,11 @@
                 <div className="h-screen flex flex-col overflow-hidden">
                   <div className="bg-[#003057] text-[#fcc314] p-4 md:p-6 shadow-md shrink-0 z-10">
                     <div className="flex justify-between items-center max-w-full mx-auto w-full">
-                      <div className="flex flex-col min-w-0">
-                        <div className="flex items-center space-x-4"><h1 className="text-3xl md:text-5xl font-bold tracking-wider uppercase truncate">{centerName}</h1></div>
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <div className="flex items-center space-x-4">
+                           {logoUrl && <img src={logoUrl} alt="Logo" className="h-16 w-auto object-contain" />}
+                           <h1 className="text-3xl md:text-5xl font-bold tracking-wider uppercase truncate">{centerName}</h1>
+                        </div>
                         <h2 className="text-xl md:text-2xl mt-2 font-light flex items-center opacity-90"><span className="mr-4">{formatDate(currentTime)}</span><span className="px-2 py-0.5 bg-[#fcc314]/20 rounded text-sm text-[#fcc314] uppercase tracking-widest">{activeDay.name}</span></h2>
                       </div>
                       <div className="text-right bg-[#003057]/50 p-3 rounded-xl ml-4 shrink-0">
@@ -315,50 +337,57 @@
                       </div>
                     </div>
                   </div>
-                  <div className="flex-grow flex flex-col bg-gray-50 overflow-hidden relative p-4">
-                    <div className="w-full h-full flex flex-col gap-4">
+                  <div className="flex-grow bg-gray-50 p-4 overflow-hidden">
+                    <div className="w-full h-full grid grid-cols-2 grid-rows-4 gap-4">
                         {activeDay.exams.filter(e => !e.isHidden).length === 0 && (
-                           <div className="flex-grow flex flex-col items-center justify-center text-gray-400"><Calendar size={64} className="mb-4 opacity-20" /><p className="text-2xl font-light">No exams visible for {activeDay.name}.</p><p className="mt-2 text-sm opacity-60">Check settings to add exams or unhide them.</p></div>
+                           <div className="col-span-2 row-span-4 flex flex-col items-center justify-center text-gray-400"><Calendar size={64} className="mb-4 opacity-20" /><p className="text-2xl font-light">No exams visible for {activeDay.name}.</p><p className="mt-2 text-sm opacity-60">Check settings to add exams or unhide them.</p></div>
                         )}
-                        {activeDay.exams.filter(e => !e.isHidden).map((exam) => {
+                        {activeDay.exams.filter(e => !e.isHidden).slice(0, 8).map((exam) => {
                            const status = getExamStatus(exam);
                            const timings = getExamTimings(exam);
                            const style30 = getWarningStyles(timings.warning30);
                            const style05 = getWarningStyles(timings.warning05);
                            return (
-                            <div key={exam.id} className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col flex-1 min-h-0 relative">
+                            <div key={exam.id} className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative">
                               <div className={`h-2 w-full shrink-0 ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : 'bg-gray-300'}`}></div>
-                              <div className="flex-grow flex flex-col justify-center p-4 md:px-8">
-                                <div className="flex justify-between items-center mb-2 md:mb-4">
-                                  <h3 className="text-3xl md:text-5xl font-bold text-gray-900 pr-4 leading-tight truncate">{exam.subject}</h3>
-                                  <div className={`shrink-0 px-4 py-1 rounded-full text-base md:text-lg font-bold uppercase tracking-wider ${status.code === 'writing' ? 'bg-green-100 text-green-800 border border-green-200' : status.code === 'reading' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>{status.status}</div>
+                              <div className="flex-grow flex flex-col p-4 justify-between">
+                                <div className="flex justify-between items-start mb-2">
+                                  <h3 className="text-xl font-bold text-gray-900 leading-tight line-clamp-2 w-2/3" title={exam.subject}>{exam.subject}</h3>
+                                  <div className={`shrink-0 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${status.code === 'writing' ? 'bg-green-100 text-green-800 border border-green-200' : status.code === 'reading' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>{status.status}</div>
                                 </div>
-                                <div className="grid grid-cols-12 gap-4 md:gap-8 items-center h-full max-h-[70%]">
-                                  <div className="col-span-3 bg-gray-50 rounded-lg border border-gray-100 flex flex-col justify-center items-center h-full py-2">
-                                    <div className="text-gray-500 text-[10px] md:text-xs uppercase tracking-wider font-semibold">Start Time</div>
-                                    <div className="text-3xl md:text-5xl font-mono text-gray-800 font-bold leading-none">{formatShortTime(timings.startTime)}</div>
-                                  </div>
-                                  <div className="col-span-3 bg-gray-50 rounded-lg border border-gray-100 flex flex-col justify-center items-center h-full py-2">
-                                     <div className="text-gray-500 text-[10px] md:text-xs uppercase tracking-wider font-semibold">End Time</div>
-                                     <div className="text-3xl md:text-5xl font-mono text-gray-800 font-bold leading-none">{formatShortTime(timings.endTime)}</div>
-                                  </div>
-                                  <div className={`col-span-6 h-full rounded-lg border flex flex-col justify-center items-center px-4 ${status.color.replace('text-', 'bg-').replace('600', '50')} border-opacity-20`}>
-                                     <div className="text-gray-500 text-[10px] md:text-xs uppercase tracking-wider font-semibold mb-1">Time Remaining</div>
-                                     <div className={`text-4xl md:text-6xl font-bold leading-none ${status.color} text-center`}>{status.message.replace(/mins?|remaining|Starts in/g, '').trim()} <span className="text-xl md:text-2xl font-normal text-gray-500">mins</span></div>
-                                  </div>
-                                </div>
-                                {(timings.writingDuration > 5) && (
-                                   <div className="mt-2 md:mt-4 pt-2 border-t border-gray-100 flex gap-4 shrink-0">
-                                     {timings.writingDuration > 30 && (<div className={`flex items-center px-3 py-1 md:py-2 rounded border transition-all duration-500 ${style30.container}`}><Bell size={16} className={`mr-2 ${style30.icon}`} /><span className={`text-xs md:text-sm uppercase tracking-wider mr-2 ${style30.label}`}>30 Min Warning:</span><span className={`text-lg md:text-xl font-mono ${style30.time}`}>{formatShortTime(timings.warning30)}</span></div>)}
-                                     <div className={`flex items-center px-3 py-1 md:py-2 rounded border transition-all duration-500 ${style05.container}`}><Bell size={16} className={`mr-2 ${style05.icon}`} /><span className={`text-xs md:text-sm uppercase tracking-wider mr-2 ${style05.label}`}>5 Min Warning:</span><span className={`text-lg md:text-xl font-mono ${style05.time}`}>{formatShortTime(timings.warning05)}</span></div>
+                                
+                                <div className="flex justify-center my-2">
+                                   <div className={`text-center ${status.color}`}>
+                                     <div className="text-5xl font-bold leading-none tracking-tight">{status.message.replace(/mins?|remaining|Starts in/g, '').trim()}</div>
+                                     <div className="text-sm font-medium uppercase tracking-widest opacity-70">Minutes Left</div>
                                    </div>
-                                 )}
+                                </div>
+
+                                <div>
+                                    <div className="grid grid-cols-2 gap-2 mb-2 bg-gray-50 rounded p-2 border border-gray-100">
+                                        <div className="text-center">
+                                            <div className="text-[10px] text-gray-400 font-bold uppercase">Start</div>
+                                            <div className="text-lg font-mono font-bold text-gray-700">{formatShortTime(timings.startTime)}</div>
+                                        </div>
+                                        <div className="text-center border-l border-gray-200">
+                                            <div className="text-[10px] text-gray-400 font-bold uppercase">End</div>
+                                            <div className="text-lg font-mono font-bold text-gray-700">{formatShortTime(timings.endTime)}</div>
+                                        </div>
+                                    </div>
+
+                                    {(timings.writingDuration > 5) && (
+                                       <div className="flex gap-2 justify-center">
+                                         {timings.writingDuration > 30 && (<div className={`flex items-center justify-center px-2 py-1 rounded border text-[10px] font-bold w-1/2 ${style30.container.replace('text-lg', 'text-xs').replace('px-3 py-1', 'px-1 py-0.5')}`}><span className={`${style30.label} mr-1`}>30m:</span><span className={`${style30.time}`}>{formatShortTime(timings.warning30)}</span></div>)}
+                                         <div className={`flex items-center justify-center px-2 py-1 rounded border text-[10px] font-bold w-1/2 ${style05.container.replace('text-lg', 'text-xs').replace('px-3 py-1', 'px-1 py-0.5')}`}><span className={`${style05.label} mr-1`}>5m:</span><span className={`${style05.time}`}>{formatShortTime(timings.warning05)}</span></div>
+                                       </div>
+                                     )}
+                                </div>
                               </div>
                             </div>
                            );
                         })}
                     </div>
-                    <div className="py-4 text-gray-400 flex items-center justify-center opacity-70 shrink-0"><Clock size={16} className="mr-2 animate-pulse" /><span className="uppercase text-xs tracking-[0.3em] font-medium">Silence Please</span></div>
+                    <div className="absolute bottom-2 left-0 right-0 text-center py-2 text-gray-400 flex items-center justify-center opacity-70 pointer-events-none"><Clock size={14} className="mr-2 animate-pulse" /><span className="uppercase text-[10px] tracking-[0.3em] font-medium">Silence Please</span></div>
                   </div>
                 </div>
               )}
