@@ -1,0 +1,711 @@
+import React, { useState, useEffect } from 'react';
+
+// --- INTERNAL ICONS (No external dependencies needed) ---
+const IconWrapper = ({ children, size = 24, className = "" }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    {children}
+  </svg>
+);
+
+const Settings = (props) => (
+  <IconWrapper {...props}>
+    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+  </IconWrapper>
+);
+const Plus = (props) => (<IconWrapper {...props}><path d="M5 12h14M12 5v14"/></IconWrapper>);
+const Trash2 = (props) => (<IconWrapper {...props}><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"/></IconWrapper>);
+const Maximize = (props) => (<IconWrapper {...props}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></IconWrapper>);
+const Minimize = (props) => (<IconWrapper {...props}><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></IconWrapper>);
+const AlertCircle = (props) => (<IconWrapper {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></IconWrapper>);
+const Clock = (props) => (<IconWrapper {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></IconWrapper>);
+const Bell = (props) => (<IconWrapper {...props}><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></IconWrapper>);
+const Calendar = (props) => (<IconWrapper {...props}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></IconWrapper>);
+const Eye = (props) => (<IconWrapper {...props}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></IconWrapper>);
+const EyeOff = (props) => (<IconWrapper {...props}><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22"/></IconWrapper>);
+const Copy = (props) => (<IconWrapper {...props}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></IconWrapper>);
+const FileText = (props) => (<IconWrapper {...props}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></IconWrapper>);
+const ChevronDown = (props) => (<IconWrapper {...props}><polyline points="6 9 12 15 18 9"/></IconWrapper>);
+const ChevronUp = (props) => (<IconWrapper {...props}><polyline points="18 15 12 9 6 15"/></IconWrapper>);
+
+const App = () => {
+  // --- STATE ---
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [isSetupMode, setIsSetupMode] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [centerName, setCenterName] = useState("MOCK EXAMINATION WEEK");
+  const [activeDayId, setActiveDayId] = useState(1); 
+  
+  // Bulk Import State
+  const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
+  const [bulkText, setBulkText] = useState("");
+  const [importStatus, setImportStatus] = useState("");
+
+  // Data Structure: Array of Days, each containing an array of Exams
+  const [schedule, setSchedule] = useState([
+    {
+      id: 1,
+      name: "Day 1",
+      exams: [
+        {
+          id: 101,
+          subject: "Biology/Chemistry/Physics/SEHS HL P2",
+          startTime: "08:15",
+          duration: 150, // 2h 30m
+          readingTime: 5,
+          hasReadingTime: true,
+          isHidden: false
+        },
+        {
+          id: 102,
+          subject: "Comp Sci HL P1",
+          startTime: "08:15",
+          duration: 130, // 2h 10m
+          readingTime: 5,
+          hasReadingTime: true,
+          isHidden: false
+        },
+        {
+          id: 103,
+          subject: "ESS SL P2",
+          startTime: "08:15",
+          duration: 120, // 2h 00m
+          readingTime: 5,
+          hasReadingTime: true,
+          isHidden: false
+        },
+        {
+          id: 104,
+          subject: "Bio/Chem/Phys/SEHS SL P2 / Comp Sci SL P1 / DT HL P3",
+          startTime: "08:15",
+          duration: 90, // 1h 30m
+          readingTime: 5,
+          hasReadingTime: true,
+          isHidden: false
+        }
+      ]
+    },
+    {
+      id: 2,
+      name: "Day 2",
+      exams: []
+    }
+  ]);
+
+  // --- EFFECTS ---
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // --- HELPERS ---
+  const formatTime = (date) => date.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const formatShortTime = (date) => date.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit' });
+  const formatDate = (date) => date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  // Safe Fullscreen Toggle
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+          setIsFullscreen(true);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+          setIsFullscreen(false);
+        }
+      }
+    } catch (err) {
+      console.warn("Fullscreen interaction failed or is restricted:", err);
+    }
+  };
+
+  const getExamTimings = (exam) => {
+    const [startH, startM] = exam.startTime.split(':').map(Number);
+    const startTime = new Date();
+    startTime.setHours(startH, startM, 0);
+
+    const readingDuration = exam.hasReadingTime ? parseInt(exam.readingTime) : 0;
+    const writingDuration = parseInt(exam.duration);
+    
+    const readingEndTime = new Date(startTime);
+    readingEndTime.setMinutes(startTime.getMinutes() + readingDuration);
+
+    const endTime = new Date(readingEndTime);
+    endTime.setMinutes(readingEndTime.getMinutes() + writingDuration);
+
+    const warning30 = new Date(endTime);
+    warning30.setMinutes(endTime.getMinutes() - 30);
+
+    const warning05 = new Date(endTime);
+    warning05.setMinutes(endTime.getMinutes() - 5);
+
+    return { startTime, readingEndTime, endTime, warning30, warning05, writingDuration };
+  };
+
+  const getExamStatus = (exam) => {
+    const now = new Date();
+    const { startTime, readingEndTime, endTime } = getExamTimings(exam);
+
+    if (now < startTime) {
+      const diff = Math.ceil((startTime - now) / 60000);
+      return { status: 'UPCOMING', message: `Starts in ${diff} mins`, color: 'text-blue-600', code: 'upcoming' };
+    } else if (exam.hasReadingTime && now < readingEndTime) {
+      const diff = Math.ceil((readingEndTime - now) / 60000);
+      return { status: 'READING TIME', message: `${diff} mins remaining`, color: 'text-amber-600', code: 'reading' };
+    } else if (now < endTime) {
+      const diff = Math.ceil((endTime - now) / 60000);
+      return { status: 'WRITING TIME', message: `${diff} mins remaining`, color: 'text-green-600', code: 'writing' };
+    } else {
+      return { status: 'FINISHED', message: 'Pens Down', color: 'text-red-600', code: 'finished' };
+    }
+  };
+
+  const getWarningStyles = (warningTime) => {
+    const diff = (warningTime - currentTime) / 60000;
+    if (diff < 0) return { container: "bg-gray-100 border-gray-200 opacity-50 grayscale", icon: "text-gray-400", label: "text-gray-400", time: "text-gray-400 line-through" };
+    if (diff <= 3) return { container: "bg-red-50 border-red-200 shadow-md animate-pulse ring-1 ring-red-200", icon: "text-red-500", label: "text-red-700 font-bold", time: "text-red-900 font-bold" };
+    return { container: "bg-gray-50 border-gray-100", icon: "text-gray-400", label: "text-gray-600 font-semibold", time: "text-gray-900 font-bold" };
+  };
+
+  // --- ACTIONS ---
+  const addDay = () => {
+    const newId = Math.max(...schedule.map(d => d.id), 0) + 1;
+    setSchedule([...schedule, { id: newId, name: `Day ${newId}`, exams: [] }]);
+    setActiveDayId(newId);
+  };
+
+  const updateDayName = (id, name) => {
+    setSchedule(schedule.map(day => day.id === id ? { ...day, name } : day));
+  };
+
+  const deleteDay = (id) => {
+    if (schedule.length <= 1) return; // Prevent deleting last day
+    const newSchedule = schedule.filter(d => d.id !== id);
+    setSchedule(newSchedule);
+    if (activeDayId === id) setActiveDayId(newSchedule[0].id);
+  };
+
+  const activeDay = schedule.find(d => d.id === activeDayId) || schedule[0];
+
+  const updateActiveDayExams = (newExams) => {
+    setSchedule(schedule.map(d => d.id === activeDayId ? { ...d, exams: newExams } : d));
+  };
+
+  const addExam = () => {
+    const newExam = {
+      id: Date.now(),
+      subject: "New Subject",
+      startTime: "09:00",
+      duration: 60,
+      readingTime: 0,
+      hasReadingTime: false,
+      isHidden: false
+    };
+    updateActiveDayExams([...activeDay.exams, newExam]);
+  };
+
+  const removeExam = (examId) => {
+    updateActiveDayExams(activeDay.exams.filter(e => e.id !== examId));
+  };
+
+  const updateExam = (examId, field, value) => {
+    updateActiveDayExams(activeDay.exams.map(e => e.id === examId ? { ...e, [field]: value } : e));
+  };
+
+  const toggleHideExam = (examId) => {
+    updateActiveDayExams(activeDay.exams.map(e => e.id === examId ? { ...e, isHidden: !e.isHidden } : e));
+  };
+
+  const duplicateExam = (examId, extraTimePercent) => {
+    const original = activeDay.exams.find(e => e.id === examId);
+    if (!original) return;
+
+    // Calculate new duration
+    const newDuration = Math.ceil(parseInt(original.duration) * (1 + extraTimePercent / 100));
+    
+    // Global ET naming logic
+    const etExams = activeDay.exams.filter(e => /^ET-\d+$/.test(e.subject));
+    
+    let maxNum = 0;
+    etExams.forEach(e => {
+        const num = parseInt(e.subject.replace('ET-', ''));
+        if (!isNaN(num) && num > maxNum) maxNum = num;
+    });
+    
+    const nextNum = maxNum + 1;
+
+    const newExam = {
+      ...original,
+      id: Date.now(),
+      subject: `ET-${nextNum}`,
+      duration: newDuration,
+      isHidden: false
+    };
+
+    updateActiveDayExams([...activeDay.exams, newExam]);
+  };
+
+  // --- BULK IMPORT LOGIC ---
+  const handleBulkImport = () => {
+    if (!bulkText.trim()) return;
+
+    // Regex to match the format: Subject HL/SL P# Duration Start Finish
+    // Allows for squashed text (e.g. P22:30) or spaced text.
+    const regex = /([a-zA-Z\s\/&]+?)\s+(HL|SL)\s+(P\d)\s*(\d{1,2}:\d{2})\s*(\d{1,2}:\d{2})\s*(\d{1,2}:\d{2})/gi;
+    
+    const matches = [...bulkText.matchAll(regex)];
+    
+    if (matches.length === 0) {
+      setImportStatus("No valid exams found. Check format.");
+      return;
+    }
+
+    const parsedExams = [];
+
+    matches.forEach(match => {
+      const subjectBase = match[1].trim();
+      const level = match[2];
+      const paper = match[3];
+      const durationStr = match[4];
+      const startTime = match[5].padStart(5, '0'); // Ensure HH:MM format
+
+      // Convert Duration H:MM to minutes
+      const [durH, durM] = durationStr.split(':').map(Number);
+      const durationMins = (durH * 60) + durM;
+
+      parsedExams.push({
+        subjectRaw: `${subjectBase} ${level} ${paper}`,
+        startTime: startTime,
+        duration: durationMins
+      });
+    });
+
+    // Merging Logic: Combine exams with same Start Time AND Duration
+    const mergedExamsMap = new Map();
+
+    parsedExams.forEach(exam => {
+      const key = `${exam.startTime}-${exam.duration}`;
+      
+      if (mergedExamsMap.has(key)) {
+        // Append subject to existing entry
+        const existing = mergedExamsMap.get(key);
+        existing.subjectRaw += ` / ${exam.subjectRaw}`;
+      } else {
+        // Create new entry
+        mergedExamsMap.set(key, { ...exam });
+      }
+    });
+
+    // Convert map to final Exam objects
+    const newExamObjects = Array.from(mergedExamsMap.values()).map((ex, index) => ({
+      id: Date.now() + index,
+      subject: ex.subjectRaw,
+      startTime: ex.startTime,
+      duration: ex.duration,
+      readingTime: 5, // Defaulting to 5 mins
+      hasReadingTime: true,
+      isHidden: false
+    }));
+
+    // Add to current schedule
+    updateActiveDayExams([...activeDay.exams, ...newExamObjects]);
+    setBulkText("");
+    setImportStatus(`Successfully added ${newExamObjects.length} exam slots.`);
+    setTimeout(() => setImportStatus(""), 3000);
+  };
+
+  // --- RENDER ---
+  return (
+    <div className={`min-h-screen font-sans flex flex-col ${isSetupMode ? 'bg-gray-100' : 'bg-gray-50'}`}>
+      
+      {/* --- Control Bar --- */}
+      <div className={`fixed top-0 left-0 right-0 p-2 flex justify-between items-center z-50 transition-opacity duration-300 ${!isSetupMode ? 'opacity-0 hover:opacity-100 bg-gray-900/90 text-white' : 'bg-white shadow-sm text-gray-800'}`}>
+        <div className="flex items-center space-x-4">
+          <button 
+            onClick={() => setIsSetupMode(!isSetupMode)}
+            className="flex items-center space-x-2 px-3 py-1 rounded hover:bg-gray-200 hover:text-gray-900 transition"
+          >
+            <Settings size={18} />
+            <span className="text-sm font-medium">{isSetupMode ? 'Go to Exam View' : 'Edit Settings'}</span>
+          </button>
+        </div>
+        <div className="flex items-center space-x-4">
+          <button onClick={toggleFullscreen} className="p-1 hover:text-blue-500">
+            {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+          </button>
+        </div>
+      </div>
+
+      {/* --- SETUP MODE --- */}
+      {isSetupMode && (
+        <div className="container mx-auto pt-20 pb-10 px-4 max-w-6xl">
+            <h1 className="text-3xl font-bold mb-6 text-gray-800">Exam Dashboard Setup</h1>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              
+              {/* Left Column: Global & Day Nav */}
+              <div className="lg:col-span-1 space-y-6">
+                
+                {/* Global Settings */}
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                  <h2 className="text-sm font-bold uppercase text-gray-500 mb-3 tracking-wider">Global Title</h2>
+                  <input 
+                    type="text" 
+                    value={centerName}
+                    onChange={(e) => setCenterName(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="e.g. MOCK EXAMS"
+                  />
+                </div>
+
+                {/* Day Selector */}
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                  <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-sm font-bold uppercase text-gray-500 tracking-wider">Days</h2>
+                    <button onClick={addDay} className="text-blue-600 hover:bg-blue-50 p-1 rounded">
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {schedule.map(day => (
+                      <div 
+                        key={day.id}
+                        onClick={() => setActiveDayId(day.id)}
+                        className={`p-3 rounded-lg cursor-pointer border transition-all flex justify-between items-center group ${activeDayId === day.id ? 'bg-blue-50 border-blue-500 ring-1 ring-blue-500' : 'bg-gray-50 border-transparent hover:bg-gray-100'}`}
+                      >
+                         <div className="flex-1">
+                           {activeDayId === day.id ? (
+                             <input 
+                              type="text"
+                              value={day.name}
+                              onChange={(e) => updateDayName(day.id, e.target.value)}
+                              className="bg-transparent font-medium text-blue-900 w-full outline-none"
+                              onClick={(e) => e.stopPropagation()} 
+                             />
+                           ) : (
+                             <span className="font-medium text-gray-700">{day.name}</span>
+                           )}
+                           <div className="text-xs text-gray-400 mt-1">{day.exams.length} exams</div>
+                         </div>
+                         {schedule.length > 1 && (
+                           <button 
+                            onClick={(e) => { e.stopPropagation(); deleteDay(day.id); }}
+                            className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                           >
+                             <Trash2 size={14} />
+                           </button>
+                         )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Exams for Selected Day */}
+              <div className="lg:col-span-3 space-y-4">
+                 <div className="flex justify-between items-end mb-2">
+                    <h2 className="text-xl font-bold text-gray-800">Schedule for <span className="text-blue-600">{activeDay.name}</span></h2>
+                    <button 
+                      onClick={() => setIsSetupMode(false)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-sm font-bold text-sm transition flex items-center"
+                    >
+                      <Eye size={16} className="mr-2" /> View Board
+                    </button>
+                 </div>
+
+                 {/* BULK IMPORT SECTION */}
+                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                   <button 
+                     onClick={() => setIsBulkImportOpen(!isBulkImportOpen)}
+                     className="w-full px-4 py-3 flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition text-left"
+                   >
+                     <div className="flex items-center text-gray-700 font-bold">
+                       <FileText size={18} className="mr-2 text-blue-600" />
+                       Bulk Import Exams
+                     </div>
+                     {isBulkImportOpen ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
+                   </button>
+                   
+                   {isBulkImportOpen && (
+                     <div className="p-4 border-t border-gray-200">
+                       <p className="text-xs text-gray-500 mb-2">
+                         Paste exams in format: <strong>Subject HL/SL P# Duration Start Finish</strong>. 
+                         (e.g., <em>Biology HL P2 2:30 08:15 10:45</em>)
+                       </p>
+                       <textarea 
+                         value={bulkText}
+                         onChange={(e) => setBulkText(e.target.value)}
+                         placeholder={"Biology HL P2 2:30 08:15 10:45\nChemistry HL P2 2:30 08:15 10:45"}
+                         className="w-full h-32 p-3 border border-gray-300 rounded-md text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none resize-y mb-3"
+                       />
+                       <div className="flex justify-between items-center">
+                         <span className={`text-sm font-bold ${importStatus.includes("No") ? "text-red-500" : "text-green-600"}`}>
+                           {importStatus}
+                         </span>
+                         <button 
+                           onClick={handleBulkImport}
+                           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-bold"
+                         >
+                           Process & Add Exams
+                         </button>
+                       </div>
+                     </div>
+                   )}
+                 </div>
+
+                 {activeDay.exams.length === 0 && (
+                   <div className="bg-white p-10 rounded-lg border border-dashed border-gray-300 text-center text-gray-400">
+                     No exams added for this day yet.
+                   </div>
+                 )}
+
+                 {activeDay.exams.map((exam) => {
+                   const timings = getExamTimings(exam);
+                   return (
+                    <div key={exam.id} className={`bg-white p-4 rounded-lg shadow-sm border transition-all ${exam.isHidden ? 'border-gray-200 opacity-60 bg-gray-50' : 'border-gray-300'}`}>
+                      {/* Tools Row */}
+                      <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
+                        <div className="flex items-center space-x-2">
+                           <button 
+                             onClick={() => toggleHideExam(exam.id)}
+                             className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${exam.isHidden ? 'bg-gray-200 text-gray-600' : 'bg-green-100 text-green-700'}`}
+                             title={exam.isHidden ? "Currently Hidden from Board" : "Visible on Board"}
+                           >
+                             {exam.isHidden ? <EyeOff size={14} className="mr-1" /> : <Eye size={14} className="mr-1" />}
+                             <span>{exam.isHidden ? "Hidden" : "Visible"}</span>
+                           </button>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs font-bold text-gray-400 uppercase mr-2">Create Extra Time:</span>
+                          <button 
+                            onClick={() => duplicateExam(exam.id, 25)}
+                            className="flex items-center px-2 py-1 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 text-xs font-bold transition"
+                          >
+                            <Copy size={12} className="mr-1" /> +25%
+                          </button>
+                          <button 
+                            onClick={() => duplicateExam(exam.id, 50)}
+                            className="flex items-center px-2 py-1 bg-purple-50 text-purple-600 rounded hover:bg-purple-100 text-xs font-bold transition"
+                          >
+                            <Copy size={12} className="mr-1" /> +50%
+                          </button>
+                          <div className="w-px h-4 bg-gray-200 mx-2"></div>
+                          <button 
+                            onClick={() => removeExam(exam.id)}
+                            className="text-gray-400 hover:text-red-500 transition p-1"
+                            title="Delete Exam"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                        <div className="md:col-span-4">
+                          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Subject</label>
+                          <input 
+                            type="text" 
+                            value={exam.subject}
+                            onChange={(e) => updateExam(exam.id, 'subject', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded font-medium text-sm"
+                          />
+                        </div>
+                        
+                        <div className="md:col-span-2">
+                          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
+                          <input 
+                            type="time" 
+                            value={exam.startTime}
+                            onChange={(e) => updateExam(exam.id, 'startTime', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded text-sm"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Duration (Mins)</label>
+                          <input 
+                            type="number" 
+                            value={exam.duration}
+                            onChange={(e) => updateExam(exam.id, 'duration', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded text-sm"
+                          />
+                        </div>
+
+                        <div className="md:col-span-3">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <input 
+                              type="checkbox" 
+                              id={`reading-${exam.id}`}
+                              checked={exam.hasReadingTime}
+                              onChange={(e) => updateExam(exam.id, 'hasReadingTime', e.target.checked)}
+                              className="h-4 w-4 text-blue-600 rounded"
+                            />
+                            <label htmlFor={`reading-${exam.id}`} className="text-xs text-gray-700">Reading Time?</label>
+                          </div>
+                          {exam.hasReadingTime && (
+                            <div className="flex items-center space-x-2">
+                              <input 
+                                type="number" 
+                                value={exam.readingTime}
+                                onChange={(e) => updateExam(exam.id, 'readingTime', e.target.value)}
+                                className="w-16 p-2 border border-gray-300 rounded text-xs" 
+                              />
+                              <span className="text-xs text-gray-500">mins</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="md:col-span-1 text-center bg-gray-50 p-2 rounded">
+                          <div className="text-[10px] text-gray-500 uppercase font-bold">End</div>
+                          <div className="font-bold text-gray-800 text-sm">
+                            {formatShortTime(timings.endTime)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                 })}
+
+                 <button 
+                  onClick={addExam}
+                  className="mt-4 w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-500 hover:text-blue-500 transition flex items-center justify-center font-medium"
+                >
+                  <Plus size={20} className="mr-2" /> Add Subject
+                </button>
+              </div>
+            </div>
+        </div>
+      )}
+
+      {/* --- EXAM MODE --- */}
+      {!isSetupMode && (
+        <div className="h-screen flex flex-col overflow-hidden">
+          
+          {/* Header */}
+          <div className="bg-[#003057] text-[#fcc314] p-4 md:p-6 shadow-md shrink-0 z-10">
+            <div className="flex justify-between items-center max-w-full mx-auto w-full">
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center space-x-4">
+                   <h1 className="text-3xl md:text-5xl font-bold tracking-wider uppercase truncate">{centerName}</h1>
+                </div>
+                <h2 className="text-xl md:text-2xl mt-2 font-light flex items-center opacity-90">
+                  <span className="mr-4">{formatDate(currentTime)}</span>
+                  <span className="px-2 py-0.5 bg-[#fcc314]/20 rounded text-sm text-[#fcc314] uppercase tracking-widest">{activeDay.name}</span>
+                </h2>
+              </div>
+              <div className="text-right bg-[#003057]/50 p-3 rounded-xl ml-4 shrink-0">
+                 <div className="text-[10px] font-bold uppercase tracking-widest mb-1 text-right opacity-70">Current Time</div>
+                 <div className="text-6xl md:text-8xl font-mono font-bold tracking-tighter tabular-nums leading-none">
+                    {formatTime(currentTime).slice(0, 5)}
+                    <span className="text-3xl md:text-5xl ml-1 opacity-75">{formatTime(currentTime).slice(6)}</span>
+                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content Area - ADAPTIVE LAYOUT */}
+          <div className="flex-grow flex flex-col bg-gray-50 overflow-hidden relative p-4">
+            
+            {/* Exam Container - Flex Column to fill space */}
+            <div className="w-full h-full flex flex-col gap-4">
+                
+                {activeDay.exams.filter(e => !e.isHidden).length === 0 && (
+                   <div className="flex-grow flex flex-col items-center justify-center text-gray-400">
+                      <Calendar size={64} className="mb-4 opacity-20" />
+                      <p className="text-2xl font-light">No exams visible for {activeDay.name}.</p>
+                      <p className="mt-2 text-sm opacity-60">Check settings to add exams or unhide them.</p>
+                   </div>
+                )}
+
+                {activeDay.exams.filter(e => !e.isHidden).map((exam) => {
+                   const status = getExamStatus(exam);
+                   const timings = getExamTimings(exam);
+                   const style30 = getWarningStyles(timings.warning30);
+                   const style05 = getWarningStyles(timings.warning05);
+
+                   return (
+                    <div key={exam.id} className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col flex-1 min-h-0 relative">
+                      {/* Status Line */}
+                      <div className={`h-2 w-full shrink-0 ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : 'bg-gray-300'}`}></div>
+                      
+                      <div className="flex-grow flex flex-col justify-center p-4 md:px-8">
+                        {/* Top Row: Subject & Status */}
+                        <div className="flex justify-between items-center mb-2 md:mb-4">
+                          <h3 className="text-3xl md:text-5xl font-bold text-gray-900 pr-4 leading-tight">{exam.subject}</h3>
+                          <div className={`shrink-0 px-4 py-1 rounded-full text-base md:text-lg font-bold uppercase tracking-wider ${status.code === 'writing' ? 'bg-green-100 text-green-800 border border-green-200' : status.code === 'reading' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+                            {status.status}
+                          </div>
+                        </div>
+                        
+                        {/* Info Grid - Adaptive sizing */}
+                        <div className="grid grid-cols-12 gap-4 md:gap-8 items-center h-full max-h-[70%]">
+                          
+                          {/* Start/End Times */}
+                          <div className="col-span-3 bg-gray-50 rounded-lg border border-gray-100 flex flex-col justify-center items-center h-full py-2">
+                            <div className="text-gray-500 text-[10px] md:text-xs uppercase tracking-wider font-semibold">Start Time</div>
+                            <div className="text-3xl md:text-5xl font-mono text-gray-800 font-bold leading-none">{formatShortTime(timings.startTime)}</div>
+                          </div>
+                          
+                          <div className="col-span-3 bg-gray-50 rounded-lg border border-gray-100 flex flex-col justify-center items-center h-full py-2">
+                             <div className="text-gray-500 text-[10px] md:text-xs uppercase tracking-wider font-semibold">End Time</div>
+                             <div className="text-3xl md:text-5xl font-mono text-gray-800 font-bold leading-none">{formatShortTime(timings.endTime)}</div>
+                          </div>
+
+                          {/* Countdown */}
+                          <div className={`col-span-6 h-full rounded-lg border flex flex-col justify-center items-center px-4 ${status.color.replace('text-', 'bg-').replace('600', '50')} border-opacity-20`}>
+                             <div className="text-gray-500 text-[10px] md:text-xs uppercase tracking-wider font-semibold mb-1">Time Remaining</div>
+                             <div className={`text-4xl md:text-6xl font-bold leading-none ${status.color} text-center`}>
+                               {status.message.replace(/mins?|remaining|Starts in/g, '').trim()} <span className="text-xl md:text-2xl font-normal text-gray-500">mins</span>
+                             </div>
+                          </div>
+                        </div>
+
+                        {/* Warnings Row - Conditionally render based on height/space available, but here we just ensure they fit */}
+                        {(timings.writingDuration > 5) && (
+                           <div className="mt-2 md:mt-4 pt-2 border-t border-gray-100 flex gap-4 shrink-0">
+                             {timings.writingDuration > 30 && (
+                                <div className={`flex items-center px-3 py-1 md:py-2 rounded border transition-all duration-500 ${style30.container}`}>
+                                  <Bell size={16} className={`mr-2 ${style30.icon}`} />
+                                  <span className={`text-xs md:text-sm uppercase tracking-wider mr-2 ${style30.label}`}>30 Min Warning:</span>
+                                  <span className={`text-lg md:text-xl font-mono ${style30.time}`}>{formatShortTime(timings.warning30)}</span>
+                                </div>
+                             )}
+                             <div className={`flex items-center px-3 py-1 md:py-2 rounded border transition-all duration-500 ${style05.container}`}>
+                               <Bell size={16} className={`mr-2 ${style05.icon}`} />
+                               <span className={`text-xs md:text-sm uppercase tracking-wider mr-2 ${style05.label}`}>5 Min Warning:</span>
+                               <span className={`text-lg md:text-xl font-mono ${style05.time}`}>{formatShortTime(timings.warning05)}</span>
+                             </div>
+                           </div>
+                         )}
+                      </div>
+                    </div>
+                   );
+                })}
+            </div>
+            
+            {/* Footer / Silence Reminder */}
+            <div className="py-4 text-gray-400 flex items-center justify-center opacity-70 shrink-0">
+                 <Clock className="mr-2 animate-pulse" size={16} />
+                 <span className="uppercase text-xs tracking-[0.3em] font-medium">Silence Please</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
