@@ -1,6 +1,6 @@
-import React from 'react';
-import { Settings, Plus, Trash2, Eye, EyeOff, Copy, FileText, ChevronDown, ChevronUp } from './Icons';
-import { formatShortTime, getExamTimings } from '../utils/helpers';
+import React, { useState, useEffect } from 'react';
+import { Settings, Plus, Trash2, Eye, EyeOff, Copy, FileText, ChevronDown, ChevronUp, CloudDownload } from './Icons';
+import { formatShortTime, getExamTimings, parseDuration } from '../utils/helpers';
 
 const SetupPanel = ({
     centerName,
@@ -25,8 +25,144 @@ const SetupPanel = ({
     toggleHideExam,
     duplicateExam,
     removeExam,
-    updateExam
+    updateExam,
+    updateActiveDayExams,
+    setSchedule
 }) => {
+    // --- SHEET IMPORT STATE ---
+    const [isSheetImportOpen, setIsSheetImportOpen] = useState(false);
+    const [isSheetLoading, setIsSheetLoading] = useState(false);
+    const [sheetData, setSheetData] = useState([]);
+    const [sessionsData, setSessionsData] = useState([]); // Stores { name, count }
+    const [selectedSessionName, setSelectedSessionName] = useState('');
+    const [sheetImportStatus, setSheetImportStatus] = useState('');
+
+    const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdMJm8-r0SWP02GgAndgvzlb17EUGArOtou8mfDxDiLH_CqJaa2N7iZfxsGk07A5xwFp6LGv0IVpOu/pub?gid=469666362&single=true&output=tsv";
+
+    // Fetch sheet data when the section is opened
+    useEffect(() => {
+        if (isSheetImportOpen && sheetData.length === 0) {
+            handleFetchSheet();
+        }
+    }, [isSheetImportOpen]);
+
+    const handleFetchSheet = async () => {
+        setIsSheetLoading(true);
+        setSheetImportStatus("Fetching data...");
+        try {
+            const response = await fetch(TSV_URL);
+            const text = await response.text();
+
+            // Parse TSV
+            const lines = text.split('\n').filter(l => l.trim());
+            const rows = lines.slice(1).map(line => line.split('\t').map(cell => cell.trim()));
+
+            // Extract session names and counts
+            const sessionCounts = rows.reduce((acc, row) => {
+                const name = row[0];
+                if (name) acc[name] = (acc[name] || 0) + 1;
+                return acc;
+            }, {});
+
+            const uniqueSessions = Object.keys(sessionCounts).map(name => ({
+                name,
+                count: sessionCounts[name]
+            }));
+
+            setSheetData(rows);
+            setSessionsData(uniqueSessions);
+            if (uniqueSessions.length > 0) setSelectedSessionName(uniqueSessions[0].name);
+
+            setSheetImportStatus(`Loaded ${uniqueSessions.length} sessions.`);
+            setTimeout(() => setSheetImportStatus(''), 3000);
+        } catch (err) {
+            console.error("Failed to fetch sheet", err);
+            setSheetImportStatus("Error: Failed to fetch sheet.");
+        } finally {
+            setIsSheetLoading(false);
+        }
+    };
+
+    const handleImportSession = () => {
+        if (!selectedSessionName) return;
+
+        const filteredRows = sheetData.filter(row => row[0] === selectedSessionName);
+        if (filteredRows.length === 0) {
+            setSheetImportStatus("No exams found for this session.");
+            return;
+        }
+
+        const newExams = filteredRows.map((row, index) => ({
+            id: Date.now() + index,
+            subject: row[1] || "Unnamed Exam",
+            duration: parseDuration(row[2]),
+            startTime: (row[3] || "09:00").padStart(5, '0'),
+            readingTime: 5,
+            hasReadingTime: true,
+            isHidden: false
+        }));
+
+        // Find existing session or create new one
+        const existingSession = schedule.find(s => s.name === selectedSessionName);
+
+        if (existingSession) {
+            // Update existing session
+            setSchedule(prev => prev.map(s =>
+                s.id === existingSession.id ? { ...s, exams: newExams } : s
+            ));
+            setActiveDayId(existingSession.id);
+            setSheetImportStatus(`Updated session "${selectedSessionName}" with ${newExams.length} exams.`);
+        } else {
+            // Create new session
+            const newSessionId = Date.now();
+            const newSession = {
+                id: newSessionId,
+                name: selectedSessionName,
+                exams: newExams
+            };
+            setSchedule(prev => [...prev, newSession]);
+            setActiveDayId(newSessionId);
+            setSheetImportStatus(`Created session "${selectedSessionName}" with ${newExams.length} exams.`);
+        }
+        setTimeout(() => setSheetImportStatus(''), 3000);
+    };
+
+    const handleImportAllSessions = () => {
+        if (!sessionsData.length) return;
+
+        let newSchedule = [...schedule];
+        let totalExams = 0;
+
+        sessionsData.forEach(session => {
+            const filteredRows = sheetData.filter(row => row[0] === session.name);
+            const exams = filteredRows.map((row, index) => ({
+                id: Date.now() + Math.random() + index,
+                subject: row[1] || "Unnamed Exam",
+                duration: parseDuration(row[2]),
+                startTime: (row[3] || "09:00").padStart(5, '0'),
+                readingTime: 5,
+                hasReadingTime: true,
+                isHidden: false
+            }));
+
+            totalExams += exams.length;
+            const existingIdx = newSchedule.findIndex(s => s.name === session.name);
+            if (existingIdx >= 0) {
+                newSchedule[existingIdx] = { ...newSchedule[existingIdx], exams };
+            } else {
+                newSchedule.push({
+                    id: Date.now() + Math.random(),
+                    name: session.name,
+                    exams
+                });
+            }
+        });
+
+        setSchedule(newSchedule);
+        setSheetImportStatus(`Imported ${sessionsData.length} sessions (${totalExams} exams).`);
+        setTimeout(() => setSheetImportStatus(''), 3000);
+    };
+
     return (
         <div className="container mx-auto pt-20 pb-10 px-4 max-w-6xl">
             <h1 className="text-3xl font-bold mb-6 text-gray-800">Exam Dashboard Setup</h1>
@@ -51,7 +187,7 @@ const SetupPanel = ({
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                         <div className="flex justify-between items-center mb-3">
-                            <h2 className="text-sm font-bold uppercase text-gray-500 tracking-wider">Days</h2>
+                            <h2 className="text-sm font-bold uppercase text-gray-500 tracking-wider">Sessions</h2>
                             <button onClick={addDay} className="text-blue-600 hover:bg-blue-50 p-1 rounded"><Plus size={16} /></button>
                         </div>
                         <div className="space-y-2">
@@ -117,6 +253,76 @@ const SetupPanel = ({
                                     <span className={`text-sm font-bold ${importStatus.includes("No") ? "text-red-500" : "text-green-600"}`}>{importStatus}</span>
                                     <button onClick={handleBulkImport} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-bold">Process & Add Exams</button>
                                 </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Bulk Import from Sheet Section */}
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mt-4">
+                        <button
+                            onClick={() => setIsSheetImportOpen(!isSheetImportOpen)}
+                            className="w-full px-4 py-3 flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition text-left"
+                        >
+                            <div className="flex items-center text-gray-700 font-bold">
+                                <CloudDownload size={18} className="mr-2 text-blue-600" /> Bulk Import from Google Sheet
+                            </div>
+                            {isSheetImportOpen ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
+                        </button>
+                        {isSheetImportOpen && (
+                            <div className="p-4 border-t border-gray-200 bg-blue-50/30">
+                                <p className="text-xs text-gray-500 mb-3">Fetch automated schedule from the school's master Google Sheet.</p>
+
+                                {isSheetLoading ? (
+                                    <div className="flex items-center justify-center py-4">
+                                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                                        <span className="ml-3 text-sm text-gray-600">Syncing with Google Sheets...</span>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Select Session Index</label>
+                                            <div className="flex gap-2">
+                                                <select
+                                                    value={selectedSessionName}
+                                                    onChange={(e) => setSelectedSessionName(e.target.value)}
+                                                    className="flex-grow p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white font-medium"
+                                                >
+                                                    {sessionsData.length > 0 ? (
+                                                        sessionsData.map(s => <option key={s.name} value={s.name}>{s.name} ({s.count} exams)</option>)
+                                                    ) : (
+                                                        <option disabled>No sessions loaded</option>
+                                                    )}
+                                                </select>
+                                                <button
+                                                    onClick={handleFetchSheet}
+                                                    title="Refresh from Sheet"
+                                                    className="p-2 border border-gray-300 rounded hover:bg-gray-100 text-gray-500 transition-colors"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M3 21v-5h5" /></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2 pt-2 justify-end">
+                                            <span className={`text-xs font-bold w-full text-right mb-1 ${sheetImportStatus.includes("Error") ? "text-red-500" : "text-blue-600"}`}>
+                                                {sheetImportStatus}
+                                            </span>
+                                            <button
+                                                onClick={handleImportAllSessions}
+                                                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm font-bold transition-colors shadow-sm"
+                                            >
+                                                Import ALL sessions
+                                            </button>
+                                            <button
+                                                onClick={handleImportSession}
+                                                disabled={!selectedSessionName}
+                                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                                            >
+                                                Import Session
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

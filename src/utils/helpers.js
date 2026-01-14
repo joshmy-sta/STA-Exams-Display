@@ -49,3 +49,12 @@ export const getWarningStyles = (warningTime, currentTime) => {
     if (diff <= 3) return { container: "bg-red-50 border-red-200 shadow-md animate-pulse ring-1 ring-red-200", icon: "text-red-500", label: "text-red-700 font-bold", time: "text-red-900 font-bold" };
     return { container: "bg-gray-50 border-gray-100", icon: "text-gray-400", label: "text-gray-600 font-semibold", time: "text-gray-900 font-bold" };
 };
+
+export const parseDuration = (durationStr) => {
+    if (!durationStr) return 0;
+    if (String(durationStr).includes(':')) {
+        const [h, m] = durationStr.split(':').map(Number);
+        return (h * 60) + (m || 0);
+    }
+    return parseInt(durationStr) || 0;
+};

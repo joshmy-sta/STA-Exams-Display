@@ -155,6 +155,8 @@ const App = () => {
           duplicateExam={duplicateExam}
           removeExam={removeExam}
           updateExam={updateExam}
+          updateActiveDayExams={updateActiveDayExams}
+          setSchedule={setSchedule}
         />
       ) : (
         <ExamBoard
