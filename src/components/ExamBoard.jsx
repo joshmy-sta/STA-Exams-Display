@@ -51,7 +51,7 @@ const ExamBoard = ({
                         // Precise font size calculation based on character count
                         const getSubjectStyle = (text) => {
                             const len = text.length;
-                            let fontSize = '1.5rem'; // Increased from 1.25rem
+                            let fontSize = '1.25rem';
                             let lineHeight = '1.2';
 
                             if (len > 80) { fontSize = '0.85rem'; lineHeight = '1.1'; }
@@ -66,15 +66,15 @@ const ExamBoard = ({
                         const isVeryLong = exam.subject.length > 50;
 
                         return (
-                            <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-70 grayscale-[0.3] bg-gray-50' : ''}`}>
+                            <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-40 grayscale bg-gray-200' : ''}`}>
                                 <div className={`h-1.5 w-full shrink-0 ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-gray-300'}`}></div>
 
-                                <div className="flex-grow flex flex-col px-4 py-2 justify-between min-h-0">
-                                    {/* Header - No fixed height to allow shrinking */}
-                                    <div className="flex justify-between items-start mb-1 shrink-0 gap-2">
+                                <div className="flex-grow flex flex-col px-4 pt-3 pb-4 justify-between min-h-0">
+                                    {/* Subject Header - Optimized Fixed Height */}
+                                    <div className="h-12 mb-1 shrink-0 flex justify-between items-start gap-2">
                                         <h3
-                                            className="font-bold text-gray-900 line-clamp-2 flex-1"
-                                            style={subjectStyle}
+                                            className="font-bold text-gray-900 line-clamp-2 leading-tight"
+                                            style={{ fontSize: subjectStyle.fontSize }}
                                             title={exam.subject}
                                         >
                                             {exam.subject}
@@ -84,41 +84,46 @@ const ExamBoard = ({
                                         </div>
                                     </div>
 
-                                    {/* Big Countdown - Shrinks if subject is long */}
-                                    <div className="flex flex-col justify-center items-center flex-grow min-h-0 py-1">
+                                    {/* Countdown Area - More vertical space, scaling timer */}
+                                    <div className="flex-grow flex flex-col items-center justify-center min-h-0">
                                         <div className={`text-center ${status.color}`}>
-                                            <div className={`${isVeryLong ? 'text-2xl md:text-3xl' : 'text-3xl md:text-5xl'} font-bold leading-none tracking-tight font-mono`}>
-                                                {status.message.replace(/remaining|Starts in/g, '').trim()}
+                                            <div className="flex items-baseline justify-center">
+                                                <div className={`${status.code === 'finished' ? 'text-lg md:text-xl' : (isVeryLong ? 'text-4xl md:text-5xl' : (status.message.includes(':') ? 'text-4xl md:text-6xl' : 'text-6xl md:text-8xl'))} font-bold leading-none tracking-tight font-mono`}>
+                                                    {status.message.replace(/remaining|Starts in/g, '').trim()}
+                                                </div>
+                                                {status.code !== 'finished' && (
+                                                    <span className="text-[10px] md:text-xs font-bold ml-1.5 lowercase opacity-80">minutes</span>
+                                                )}
                                             </div>
                                             {status.code !== 'finished' && (
-                                                <div className="text-[9px] font-medium uppercase tracking-widest opacity-70 mt-0.5">Time Left</div>
+                                                <div className="text-[8px] font-bold uppercase tracking-[0.25em] text-gray-400 mt-2">Time Left</div>
                                             )}
                                         </div>
                                     </div>
 
-                                    {/* Timings and Warnings - Guaranteed space at bottom */}
-                                    <div className="shrink-0">
-                                        <div className={`grid grid-cols-3 gap-1 mb-2 bg-gray-50 rounded p-2.5 border border-gray-100`}>
+                                    {/* Timings Footer - Guaranteed clearance */}
+                                    <div className="shrink-0 mt-3">
+                                        <div className={`grid grid-cols-3 gap-1 mb-2.5 bg-gray-50 rounded p-2 border border-gray-100`}>
                                             <div className="text-center">
-                                                <div className="text-[9px] text-gray-400 font-bold uppercase mb-0">Start</div>
-                                                <div className={`${isVeryLong ? 'text-xl md:text-2xl' : 'text-2xl md:text-3xl'} font-mono font-bold text-gray-700`}>{formatShortTime(timings.startTime)}</div>
+                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0.5">Start</div>
+                                                <div className="text-lg md:text-xl font-mono font-bold text-gray-700">{formatShortTime(timings.startTime)}</div>
                                             </div>
                                             <div className="text-center border-l border-gray-200">
-                                                <div className="text-[9px] text-gray-400 font-bold uppercase mb-0">Dur</div>
-                                                <div className={`${isVeryLong ? 'text-lg md:text-xl' : 'text-xl md:text-2xl'} font-mono font-bold text-gray-700`}>{formatDuration(timings.writingDuration)}</div>
+                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0.5">Duration</div>
+                                                <div className="text-base md:text-lg font-mono font-bold text-gray-700">{formatDuration(timings.writingDuration)}</div>
                                             </div>
                                             <div className="text-center border-l border-gray-200">
-                                                <div className="text-[9px] text-gray-400 font-bold uppercase mb-0">End</div>
-                                                <div className={`${isVeryLong ? 'text-xl md:text-2xl' : 'text-2xl md:text-3xl'} font-mono font-bold text-gray-700`}>{formatShortTime(timings.endTime)}</div>
+                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0.5">End</div>
+                                                <div className="text-lg md:text-xl font-mono font-bold text-gray-700">{formatShortTime(timings.endTime)}</div>
                                             </div>
                                         </div>
 
                                         <div className="flex gap-2 justify-center">
-                                            <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style30.container} !text-[9px]`}>
+                                            <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style30.container} !text-[8px]`}>
                                                 <span className={`${style30.label} mr-1`}>30m:</span>
                                                 <span className={`${style30.time}`}>{formatShortTime(timings.warning30)}</span>
                                             </div>
-                                            <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style05.container} !text-[9px]`}>
+                                            <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style05.container} !text-[8px]`}>
                                                 <span className={`${style05.label} mr-1`}>5m:</span>
                                                 <span className={`${style05.time}`}>{formatShortTime(timings.warning05)}</span>
                                             </div>

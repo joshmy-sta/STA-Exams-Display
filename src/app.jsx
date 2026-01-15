@@ -86,24 +86,51 @@ const App = () => {
 
   const handleBulkImport = () => {
     if (!bulkText.trim()) return;
-    const regex = /([a-zA-Z\s\/&]+?)\s+(HL|SL)\s+(P\d)\s*(\d{1,2}:\d{2})\s*(\d{1,2}:\d{2})\s*(\d{1,2}:\d{2})/gi;
-    const matches = [...bulkText.matchAll(regex)];
-    if (matches.length === 0) { setImportStatus("No valid exams found. Check format."); return; }
-    const parsedExams = [];
-    matches.forEach(match => {
-      const [durH, durM] = match[4].split(':').map(Number);
-      parsedExams.push({ subjectRaw: `${match[1].trim()} ${match[2]} ${match[3]}`, startTime: match[5].padStart(5, '0'), duration: (durH * 60) + durM });
+    const lines = bulkText.split('\n').filter(l => l.trim());
+    const newExams = [];
+
+    lines.forEach((line, index) => {
+      // Find the first occurrence of HH:MM for start time
+      const timeMatch = line.match(/(\d{1,2}:\d{2})/);
+      if (timeMatch) {
+        const startTime = timeMatch[1].padStart(5, '0');
+        const timeIdx = line.indexOf(timeMatch[1]);
+        const subject = line.substring(0, timeIdx).trim();
+        const afterTime = line.substring(timeIdx + timeMatch[1].length).trim();
+        const durationPart = afterTime.split(/\s+/)[0];
+
+        if (subject && startTime && durationPart) {
+          let duration = 0;
+          if (durationPart.includes(':')) {
+            const [h, m] = durationPart.split(':').map(Number);
+            duration = (h * 60) + (m || 0);
+          } else {
+            duration = parseInt(durationPart) || 0;
+          }
+
+          if (duration > 0) {
+            newExams.push({
+              id: Date.now() + index + Math.random(),
+              subject,
+              startTime,
+              duration,
+              readingTime: 5,
+              hasReadingTime: true,
+              isHidden: false
+            });
+          }
+        }
+      }
     });
-    const mergedExamsMap = new Map();
-    parsedExams.forEach(exam => {
-      const key = `${exam.startTime}-${exam.duration}`;
-      if (mergedExamsMap.has(key)) mergedExamsMap.get(key).subjectRaw += ` / ${exam.subjectRaw}`;
-      else mergedExamsMap.set(key, { ...exam });
-    });
-    const newExamObjects = Array.from(mergedExamsMap.values()).map((ex, index) => ({ id: Date.now() + index, subject: ex.subjectRaw, startTime: ex.startTime, duration: ex.duration, readingTime: 5, hasReadingTime: true, isHidden: false }));
-    updateActiveDayExams([...activeDay.exams, ...newExamObjects]);
+
+    if (newExams.length === 0) {
+      setImportStatus("No valid exams found. Format: Subject Start Dur");
+      return;
+    }
+
+    updateActiveDayExams([...activeDay.exams, ...newExams]);
     setBulkText("");
-    setImportStatus(`Successfully added ${newExamObjects.length} exam slots.`);
+    setImportStatus(`Successfully added ${newExams.length} exams.`);
     setTimeout(() => setImportStatus(""), 3000);
   };
 

@@ -236,11 +236,11 @@ const SetupPanel = ({
                         </button>
                         {isBulkImportOpen && (
                             <div className="p-4 border-t border-gray-200">
-                                <p className="text-xs text-gray-500 mb-2">Paste exams in format: <strong>Subject HL/SL P# Duration Start Finish</strong>.</p>
+                                <p className="text-xs text-gray-500 mb-2">Paste exams in format: <strong>Subject [tab or space] Start-Time [tab or space] Duration</strong>.</p>
                                 <textarea
                                     value={bulkText}
                                     onChange={(e) => setBulkText(e.target.value)}
-                                    placeholder={"Biology HL P2 2:30 08:15 10:45"}
+                                    placeholder={"Biology 08:30 90\nMathematics 13:15 1:30"}
                                     className="w-full h-32 p-3 border border-gray-300 rounded-md text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none resize-y mb-3"
                                 />
                                 <div className="flex justify-between items-center">
