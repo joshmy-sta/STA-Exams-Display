@@ -63,14 +63,13 @@ const ExamBoard = ({
                         };
 
                         const subjectStyle = getSubjectStyle(exam.subject);
-                        const isVeryLong = exam.subject.length > 50;
 
                         return (
                             <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-40 grayscale bg-gray-200' : ''}`}>
                                 <div className={`h-1.5 w-full shrink-0 ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-gray-300'}`}></div>
 
-                                <div className="flex-grow flex flex-col px-4 pt-3 pb-4 justify-between min-h-0">
-                                    {/* Subject Header - Optimized Fixed Height */}
+                                <div className="flex-grow flex flex-col px-4 pt-3 pb-3 justify-between min-h-0">
+                                    {/* Subject Header - Capped at 2 lines */}
                                     <div className="h-12 mb-1 shrink-0 flex justify-between items-start gap-2">
                                         <h3
                                             className="font-bold text-gray-900 line-clamp-2 leading-tight"
@@ -84,11 +83,11 @@ const ExamBoard = ({
                                         </div>
                                     </div>
 
-                                    {/* Countdown Area - More vertical space, scaling timer */}
+                                    {/* Countdown Area - Consistent large size */}
                                     <div className="flex-grow flex flex-col items-center justify-center min-h-0">
                                         <div className={`text-center ${status.color}`}>
                                             <div className="flex items-baseline justify-center">
-                                                <div className={`${status.code === 'finished' ? 'text-lg md:text-xl' : (isVeryLong ? 'text-4xl md:text-5xl' : (status.message.includes(':') ? 'text-4xl md:text-6xl' : 'text-6xl md:text-8xl'))} font-bold leading-none tracking-tight font-mono`}>
+                                                <div className={`${status.code === 'finished' ? 'text-xl md:text-2xl' : (status.message.includes(':') ? 'text-4xl md:text-6xl' : 'text-6xl md:text-8xl')} font-bold leading-none tracking-tight font-mono`}>
                                                     {status.message.replace(/remaining|Starts in/g, '').trim()}
                                                 </div>
                                                 {status.code !== 'finished' && (
@@ -96,34 +95,34 @@ const ExamBoard = ({
                                                 )}
                                             </div>
                                             {status.code !== 'finished' && (
-                                                <div className="text-[8px] font-bold uppercase tracking-[0.25em] text-gray-400 mt-2">Time Left</div>
+                                                <div className="text-[8px] font-bold uppercase tracking-[0.25em] text-gray-400 mt-0.5">Time Left</div>
                                             )}
                                         </div>
                                     </div>
 
                                     {/* Timings Footer - Guaranteed clearance */}
-                                    <div className="shrink-0 mt-3">
-                                        <div className={`grid grid-cols-3 gap-1 mb-2.5 bg-gray-50 rounded p-2 border border-gray-100`}>
+                                    <div className="shrink-0 mt-2">
+                                        <div className={`grid grid-cols-3 gap-1 mb-2 bg-gray-50 rounded p-1.5 border border-gray-100`}>
                                             <div className="text-center">
-                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0.5">Start</div>
-                                                <div className="text-lg md:text-xl font-mono font-bold text-gray-700">{formatShortTime(timings.startTime)}</div>
+                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0">Start</div>
+                                                <div className="text-xl md:text-2xl font-mono font-bold text-gray-700 leading-tight">{formatShortTime(timings.startTime)}</div>
                                             </div>
                                             <div className="text-center border-l border-gray-200">
-                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0.5">Duration</div>
-                                                <div className="text-base md:text-lg font-mono font-bold text-gray-700">{formatDuration(timings.writingDuration)}</div>
+                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0">Duration</div>
+                                                <div className="text-lg md:text-xl font-mono font-bold text-gray-700 leading-tight">{formatDuration(timings.writingDuration)}</div>
                                             </div>
                                             <div className="text-center border-l border-gray-200">
-                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0.5">End</div>
-                                                <div className="text-lg md:text-xl font-mono font-bold text-gray-700">{formatShortTime(timings.endTime)}</div>
+                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0">End</div>
+                                                <div className="text-xl md:text-2xl font-mono font-bold text-gray-700 leading-tight">{formatShortTime(timings.endTime)}</div>
                                             </div>
                                         </div>
 
                                         <div className="flex gap-2 justify-center">
-                                            <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style30.container} !text-[8px]`}>
+                                            <div className={`flex items-center justify-center px-2 py-1.5 rounded border font-bold w-1/2 ${style30.container} !text-[10px]`}>
                                                 <span className={`${style30.label} mr-1`}>30m:</span>
                                                 <span className={`${style30.time}`}>{formatShortTime(timings.warning30)}</span>
                                             </div>
-                                            <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style05.container} !text-[8px]`}>
+                                            <div className={`flex items-center justify-center px-2 py-1.5 rounded border font-bold w-1/2 ${style05.container} !text-[10px]`}>
                                                 <span className={`${style05.label} mr-1`}>5m:</span>
                                                 <span className={`${style05.time}`}>{formatShortTime(timings.warning05)}</span>
                                             </div>
