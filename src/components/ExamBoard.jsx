@@ -70,18 +70,18 @@ const ExamBoard = ({
                                     </div>
 
                                     <div>
-                                        <div className="grid grid-cols-3 gap-2 mb-1 bg-gray-50 rounded p-1.5 border border-gray-100">
+                                        <div className="grid grid-cols-3 gap-2 mb-1 bg-gray-50 rounded p-2 border border-gray-100">
                                             <div className="text-center">
-                                                <div className="text-[10px] text-gray-400 font-bold uppercase">Start</div>
-                                                <div className="text-base md:text-lg font-mono font-bold text-gray-700">{formatShortTime(timings.startTime)}</div>
+                                                <div className="text-xs text-gray-400 font-bold uppercase mb-1">Start</div>
+                                                <div className="text-3xl md:text-4xl font-mono font-bold text-gray-700">{formatShortTime(timings.startTime)}</div>
                                             </div>
                                             <div className="text-center border-l border-gray-200">
-                                                <div className="text-[10px] text-gray-400 font-bold uppercase">Duration</div>
-                                                <div className="text-base md:text-lg font-mono font-bold text-gray-700">{timings.writingDuration}m</div>
+                                                <div className="text-xs text-gray-400 font-bold uppercase mb-1">Duration</div>
+                                                <div className="text-3xl md:text-4xl font-mono font-bold text-gray-700">{timings.writingDuration}m</div>
                                             </div>
                                             <div className="text-center border-l border-gray-200">
-                                                <div className="text-[10px] text-gray-400 font-bold uppercase">End</div>
-                                                <div className="text-base md:text-lg font-mono font-bold text-gray-700">{formatShortTime(timings.endTime)}</div>
+                                                <div className="text-xs text-gray-400 font-bold uppercase mb-1">End</div>
+                                                <div className="text-3xl md:text-4xl font-mono font-bold text-gray-700">{formatShortTime(timings.endTime)}</div>
                                             </div>
                                         </div>
 
