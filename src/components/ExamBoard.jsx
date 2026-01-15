@@ -111,20 +111,16 @@ const ExamBoard = ({
                                             </div>
                                         </div>
 
-                                        {(timings.writingDuration > 5) && (
-                                            <div className="flex gap-2 justify-center">
-                                                {timings.writingDuration > 30 && (
-                                                    <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style30.container} !text-[9px]`}>
-                                                        <span className={`${style30.label} mr-1`}>30m:</span>
-                                                        <span className={`${style30.time}`}>{formatShortTime(timings.warning30)}</span>
-                                                    </div>
-                                                )}
-                                                <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style05.container} !text-[9px]`}>
-                                                    <span className={`${style05.label} mr-1`}>5m:</span>
-                                                    <span className={`${style05.time}`}>{formatShortTime(timings.warning05)}</span>
-                                                </div>
+                                        <div className="flex gap-2 justify-center">
+                                            <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style30.container} !text-[9px]`}>
+                                                <span className={`${style30.label} mr-1`}>30m:</span>
+                                                <span className={`${style30.time}`}>{formatShortTime(timings.warning30)}</span>
                                             </div>
-                                        )}
+                                            <div className={`flex items-center justify-center px-1 py-0.5 rounded border font-bold w-1/2 ${style05.container} !text-[9px]`}>
+                                                <span className={`${style05.label} mr-1`}>5m:</span>
+                                                <span className={`${style05.time}`}>{formatShortTime(timings.warning05)}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
