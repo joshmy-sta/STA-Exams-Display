@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Clock, Calendar, Bell } from './Icons';
 import { formatTime, formatDate, formatShortTime, getExamStatus, getExamTimings, getWarningStyles } from '../utils/helpers';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo_new.png';
 
 const ExamBoard = ({
     centerName,
