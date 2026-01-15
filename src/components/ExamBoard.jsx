@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { Clock, Calendar, Bell } from './Icons';
 import { formatTime, formatDate, formatShortTime, getExamStatus, getExamTimings, getWarningStyles } from '../utils/helpers';
+import logo from '../assets/logo.png';
 
 const ExamBoard = ({
     centerName,
-    logoUrl,
     currentTime,
     activeDay
 }) => {
@@ -14,7 +14,7 @@ const ExamBoard = ({
                 <div className="flex justify-between items-center max-w-full mx-auto w-full">
                     <div className="flex flex-col min-w-0">
                         <div className="flex items-center space-x-4">
-                            {logoUrl && <img src={logoUrl} alt="Logo" className="h-16 w-auto object-contain" />}
+                            <img src={logo} alt="Logo" className="h-16 w-auto object-contain" />
                             <h1 className="text-3xl md:text-5xl font-bold tracking-wider uppercase truncate">{centerName}</h1>
                         </div>
                         <h2 className="text-xl md:text-2xl mt-2 font-light flex items-center opacity-90">

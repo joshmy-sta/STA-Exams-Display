@@ -27,7 +27,6 @@ const App = () => {
 
   // Persisted States
   const [centerName, setCenterName] = useState(() => loadState('examCenterName', "MOCK EXAMINATION WEEK"));
-  const [logoUrl, setLogoUrl] = useState(() => loadState('examLogoUrl', "https://img.icons8.com/color/96/school.png"));
   const [schedule, setSchedule] = useState(() => loadState('examSchedule', [
     {
       id: 1, name: "Day 1", exams: [
@@ -48,7 +47,6 @@ const App = () => {
 
   // Save to LocalStorage whenever these change
   useEffect(() => { localStorage.setItem('examCenterName', JSON.stringify(centerName)); }, [centerName]);
-  useEffect(() => { localStorage.setItem('examLogoUrl', JSON.stringify(logoUrl)); }, [logoUrl]);
   useEffect(() => { localStorage.setItem('examSchedule', JSON.stringify(schedule)); }, [schedule]);
 
   // --- HELPERS ---
@@ -134,8 +132,6 @@ const App = () => {
         <SetupPanel
           centerName={centerName}
           setCenterName={setCenterName}
-          logoUrl={logoUrl}
-          setLogoUrl={setLogoUrl}
           schedule={schedule}
           activeDayId={activeDayId}
           setActiveDayId={setActiveDayId}
@@ -161,7 +157,6 @@ const App = () => {
       ) : (
         <ExamBoard
           centerName={centerName}
-          logoUrl={logoUrl}
           currentTime={currentTime}
           activeDay={activeDay}
         />

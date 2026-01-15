@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, Plus, Trash2, Eye, EyeOff, Copy, FileText, ChevronDown, ChevronUp, CloudDownload } from './Icons';
 import { formatShortTime, getExamTimings, parseDuration } from '../utils/helpers';
+import setupLogo from '../assets/colour_square.png';
 
 const SetupPanel = ({
     centerName,
     setCenterName,
-    logoUrl,
-    setLogoUrl,
     schedule,
     activeDayId,
     setActiveDayId,
@@ -165,7 +164,10 @@ const SetupPanel = ({
 
     return (
         <div className="container mx-auto pt-20 pb-10 px-4 max-w-6xl">
-            <h1 className="text-3xl font-bold mb-6 text-gray-800">Exam Dashboard Setup</h1>
+            <div className="flex items-center space-x-4 mb-6">
+                <img src={setupLogo} alt="Logo" className="h-12 w-12 object-contain" />
+                <h1 className="text-3xl font-bold text-gray-800">Exam Dashboard Setup</h1>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <div className="lg:col-span-1 space-y-6">
                     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
@@ -175,14 +177,6 @@ const SetupPanel = ({
                             value={centerName}
                             onChange={(e) => setCenterName(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                        />
-                        <label className="block text-xs font-bold text-gray-500 uppercase mt-3 mb-1">Logo URL (Optional)</label>
-                        <input
-                            type="text"
-                            value={logoUrl}
-                            onChange={(e) => setLogoUrl(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded text-sm outline-none"
-                            placeholder="https://..."
                         />
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
