@@ -10,17 +10,17 @@ const ExamBoard = ({
 }) => {
     return (
         <div className="h-screen flex flex-col overflow-hidden">
-            <div className="bg-[#003057] text-[#fcc314] p-4 md:p-6 shadow-md shrink-0 z-10">
+            <div className="bg-[#003057] text-[#fcc314] px-4 md:px-6 shadow-md shrink-0 z-10">
                 <div className="flex justify-between items-center max-w-full mx-auto w-full">
-                    <div className="flex flex-col min-w-0">
-                        <div className="flex items-center space-x-4">
-                            <img src={logo} alt="Logo" className="h-16 w-auto object-contain" />
-                            <h1 className="text-3xl md:text-5xl font-bold tracking-wider uppercase truncate">{centerName}</h1>
+                    <div className="flex items-center space-x-8 min-w-0">
+                        <img src={logo} alt="Logo" className="h-32 md:h-52 w-auto object-contain" />
+                        <div className="flex flex-col min-w-0">
+                            <h1 className="text-4xl md:text-6xl font-bold tracking-wider uppercase truncate">{centerName}</h1>
+                            <h2 className="text-xl md:text-2xl mt-2 font-light flex items-center opacity-90">
+                                <span className="mr-4">{formatDate(currentTime)}</span>
+                                <span className="px-2 py-0.5 bg-[#fcc314]/20 rounded text-sm text-[#fcc314] uppercase tracking-widest">{activeDay.name}</span>
+                            </h2>
                         </div>
-                        <h2 className="text-xl md:text-2xl mt-2 font-light flex items-center opacity-90">
-                            <span className="mr-4">{formatDate(currentTime)}</span>
-                            <span className="px-2 py-0.5 bg-[#fcc314]/20 rounded text-sm text-[#fcc314] uppercase tracking-widest">{activeDay.name}</span>
-                        </h2>
                     </div>
                     <div className="text-right bg-[#003057]/50 p-3 rounded-xl ml-4 shrink-0">
                         <div className="text-[10px] font-bold uppercase tracking-widest mb-1 text-right opacity-70">Current Time</div>
