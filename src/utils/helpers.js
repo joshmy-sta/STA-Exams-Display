@@ -39,7 +39,7 @@ export const getExamStatus = (exam) => {
         const diff = Math.ceil((endTime - now) / 60000);
         return { status: 'WRITING TIME', message: `${diff} mins remaining`, color: 'text-green-600', code: 'writing' };
     } else {
-        return { status: 'FINISHED', message: 'Exam Ended', color: 'text-red-600', code: 'finished' };
+        return { status: 'FINISHED', message: 'Exam Ended', color: 'text-green-600', code: 'finished' };
     }
 };
 
