@@ -8,6 +8,9 @@ const ExamBoard = ({
     currentTime,
     activeDay
 }) => {
+    const visibleExams = activeDay.exams.filter(e => !e.isHidden);
+    const isHighDensity = visibleExams.length > 6;
+
     return (
         <div className="h-screen flex flex-col overflow-hidden">
             <div className="bg-[#003057] text-[#fcc314] px-4 md:px-6 shadow-md shrink-0 z-10">
@@ -33,32 +36,41 @@ const ExamBoard = ({
             </div>
 
             <div className="flex-grow bg-gray-50 p-4 pb-12 overflow-hidden">
-                <div className="w-full h-full grid grid-cols-3 grid-rows-2 gap-4">
-                    {activeDay.exams.filter(e => !e.isHidden).length === 0 && (
-                        <div className="col-span-3 row-span-2 flex flex-col items-center justify-center text-gray-400">
+                <div className={`w-full h-full grid grid-cols-3 ${isHighDensity ? 'grid-rows-3' : 'grid-rows-2'} gap-4`}>
+                    {visibleExams.length === 0 && (
+                        <div className={`col-span-3 ${isHighDensity ? 'row-span-3' : 'row-span-2'} flex flex-col items-center justify-center text-gray-400`}>
                             <Calendar size={64} className="mb-4 opacity-20" />
                             <p className="text-2xl font-light">No exams visible for {activeDay.name}.</p>
                             <p className="mt-2 text-sm opacity-60">Check settings to add exams or unhide them.</p>
                         </div>
                     )}
 
-                    {activeDay.exams.filter(e => !e.isHidden).slice(0, 6).map((exam) => {
+                    {visibleExams.slice(0, isHighDensity ? 9 : 6).map((exam) => {
                         const status = getExamStatus(exam);
                         const timings = getExamTimings(exam);
                         const style30 = getWarningStyles(timings.warning30, currentTime);
                         const style05 = getWarningStyles(timings.warning05, currentTime);
 
-                        // Precise font size calculation based on character count
                         const getSubjectStyle = (text) => {
                             const len = text.length;
+                            // Scale down for high density - slightly larger than before
+                            if (isHighDensity) {
+                                let fontSize = '1.1rem';
+                                let lineHeight = '1.1';
+                                if (len > 80) { fontSize = '0.8rem'; lineHeight = '1'; }
+                                else if (len > 60) { fontSize = '0.9rem'; lineHeight = '1'; }
+                                else if (len > 45) { fontSize = '0.95rem'; lineHeight = '1'; }
+                                else if (len > 30) { fontSize = '1.0rem'; lineHeight = '1'; }
+                                return { fontSize, lineHeight };
+                            }
+
+                            // Standard sizes
                             let fontSize = '1.25rem';
                             let lineHeight = '1.2';
-
                             if (len > 80) { fontSize = '0.85rem'; lineHeight = '1.1'; }
                             else if (len > 60) { fontSize = '1rem'; lineHeight = '1.1'; }
                             else if (len > 45) { fontSize = '1.15rem'; lineHeight = '1.2'; }
                             else if (len > 30) { fontSize = '1.35rem'; lineHeight = '1.2'; }
-
                             return { fontSize, lineHeight };
                         };
 
@@ -72,9 +84,9 @@ const ExamBoard = ({
                             <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-30 grayscale-[0.8] bg-gray-50 border-gray-100' : ''}`}>
                                 <div className={`h-1.5 w-full shrink-0 ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-gray-300'}`}></div>
 
-                                <div className="flex-grow flex flex-col px-4 pt-3 pb-3 justify-between min-h-0">
+                                <div className={`flex-grow flex flex-col px-4 ${isHighDensity ? 'pt-2 pb-1' : 'pt-3 pb-3'} justify-between min-h-0`}>
                                     {/* Subject Header - Capped at 2 lines */}
-                                    <div className="h-12 mb-1 shrink-0 flex justify-between items-start gap-2">
+                                    <div className={`${isHighDensity ? 'h-9 mb-0.5' : 'h-12 mb-1'} shrink-0 flex justify-between items-start gap-2`}>
                                         <h3
                                             className="font-bold text-gray-900 line-clamp-2 leading-tight"
                                             style={{ fontSize: subjectStyle.fontSize }}
@@ -91,42 +103,42 @@ const ExamBoard = ({
                                     <div className="flex-grow flex flex-col items-center justify-center min-h-0">
                                         <div className={`text-center ${status.color}`}>
                                             <div className="flex items-baseline justify-center">
-                                                <div className={`${status.code === 'finished' ? 'text-xl md:text-2xl' : (status.message.includes(':') ? 'text-4xl md:text-6xl' : 'text-6xl md:text-8xl')} font-bold leading-none tracking-tight font-mono`}>
+                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-3xl md:text-5xl' : 'text-4xl md:text-6xl')} font-bold leading-none tracking-tight font-mono`}>
                                                     {status.message.replace(/remaining|Starts in/g, '').trim()}
                                                 </div>
                                                 {status.code !== 'finished' && (
-                                                    <span className="text-[10px] md:text-xs font-bold ml-1.5 lowercase opacity-80">minutes</span>
+                                                    <span className={`${isHighDensity ? 'text-[8px] md:text-[9px]' : 'text-[10px] md:text-xs'} font-bold ml-1.5 lowercase opacity-80`}>minutes</span>
                                                 )}
                                             </div>
                                             {status.code !== 'finished' && (
-                                                <div className="text-[8px] font-bold uppercase tracking-[0.25em] text-gray-400 mt-0.5">Time Left</div>
+                                                <div className={`${isHighDensity ? 'text-[7px] mt-0' : 'text-[8px] mt-0.5'} font-bold uppercase tracking-[0.25em] text-gray-400`}>Time Left</div>
                                             )}
                                         </div>
                                     </div>
 
                                     {/* Timings Footer - Guaranteed clearance */}
-                                    <div className="shrink-0 mt-2">
-                                        <div className={`grid grid-cols-3 gap-1 mb-2 ${status.code === 'finished' ? 'bg-gray-50 border-gray-100 opacity-75' : 'bg-gray-100 border-gray-300'} rounded p-1.5 border`}>
+                                    <div className={`shrink-0 ${isHighDensity ? 'mt-0.5' : 'mt-2'}`}>
+                                        <div className={`grid grid-cols-3 gap-1 ${isHighDensity ? 'mb-1 p-0.5' : 'mb-2 p-1.5'} ${status.code === 'finished' ? 'bg-gray-50 border-gray-100 opacity-75' : 'bg-gray-100 border-gray-300'} rounded border`}>
                                             <div className="text-center">
                                                 <div className={`text-[8px] ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>Start</div>
-                                                <div className={`text-xl md:text-2xl font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatShortTime(timings.startTime)}</div>
+                                                <div className={`${isHighDensity ? 'text-base md:text-lg' : 'text-xl md:text-2xl'} font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatShortTime(timings.startTime)}</div>
                                             </div>
                                             <div className={`text-center border-l ${status.code === 'finished' ? 'border-gray-200' : 'border-gray-300'}`}>
                                                 <div className={`text-[8px] ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>Duration</div>
-                                                <div className={`text-lg md:text-xl font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatDuration(timings.writingDuration)}</div>
+                                                <div className={`${isHighDensity ? 'text-sm md:text-base' : 'text-lg md:text-xl'} font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatDuration(timings.writingDuration)}</div>
                                             </div>
                                             <div className={`text-center ${isFinalTwoMinutes ? 'bg-red-600 border border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-[pulse_3s_ease-in-out_infinite] ring-2 ring-red-400 rounded' : `border-l ${status.code === 'finished' ? 'border-gray-200' : 'border-gray-300'}`}`}>
                                                 <div className={`text-[8px] ${isFinalTwoMinutes ? 'text-white font-black' : (status.code === 'finished' ? 'text-gray-400' : 'text-gray-500')} font-bold uppercase mb-0`}>End</div>
-                                                <div className={`text-xl md:text-2xl font-mono font-bold ${isFinalTwoMinutes ? 'text-white' : (status.code === 'finished' ? 'text-gray-400' : 'text-gray-900')} leading-tight`}>{formatShortTime(timings.endTime)}</div>
+                                                <div className={`${isHighDensity ? 'text-base md:text-lg' : 'text-xl md:text-2xl'} font-mono font-bold ${isFinalTwoMinutes ? 'text-white' : (status.code === 'finished' ? 'text-gray-400' : 'text-gray-900')} leading-tight`}>{formatShortTime(timings.endTime)}</div>
                                             </div>
                                         </div>
 
                                         <div className="flex gap-2 justify-center">
-                                            <div className={`flex items-center justify-center px-2 py-1.5 rounded border font-bold w-1/2 ${style30.container} !text-[10px]`}>
+                                            <div className={`flex items-center justify-center ${isHighDensity ? 'px-1 py-0.5' : 'px-2 py-1.5'} rounded border font-bold w-1/2 ${style30.container} ${isHighDensity ? '!text-[8px]' : '!text-[10px]'}`}>
                                                 <span className={`${style30.label} mr-1`}>30m:</span>
                                                 <span className={`${style30.time}`}>{formatShortTime(timings.warning30)}</span>
                                             </div>
-                                            <div className={`flex items-center justify-center px-2 py-1.5 rounded border font-bold w-1/2 ${style05.container} !text-[10px]`}>
+                                            <div className={`flex items-center justify-center ${isHighDensity ? 'px-1 py-0.5' : 'px-2 py-1.5'} rounded border font-bold w-1/2 ${style05.container} ${isHighDensity ? '!text-[8px]' : '!text-[10px]'}`}>
                                                 <span className={`${style05.label} mr-1`}>5m:</span>
                                                 <span className={`${style05.time}`}>{formatShortTime(timings.warning05)}</span>
                                             </div>
