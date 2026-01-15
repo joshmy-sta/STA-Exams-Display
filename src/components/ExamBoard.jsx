@@ -48,13 +48,22 @@ const ExamBoard = ({
                         const style30 = getWarningStyles(timings.warning30, currentTime);
                         const style05 = getWarningStyles(timings.warning05, currentTime);
 
+                        // Dynamic font size based on subject length
+                        const getFontSize = (text) => {
+                            if (text.length > 55) return 'text-sm md:text-base';
+                            if (text.length > 35) return 'text-base md:text-lg';
+                            return 'text-lg md:text-xl';
+                        };
+
                         return (
                             <div key={exam.id} className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative">
                                 <div className={`h-1.5 w-full shrink-0 ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : 'bg-gray-300'}`}></div>
 
                                 <div className="flex-grow flex flex-col px-4 py-2 justify-between">
-                                    <div className="flex justify-between items-start mb-1">
-                                        <h3 className="text-lg md:text-xl font-bold text-gray-900 leading-tight line-clamp-2 w-2/3" title={exam.subject}>{exam.subject}</h3>
+                                    <div className="flex justify-between items-start mb-1 h-14 overflow-hidden">
+                                        <h3 className={`${getFontSize(exam.subject)} font-bold text-gray-900 leading-tight line-clamp-2 w-2/3`} title={exam.subject}>
+                                            {exam.subject}
+                                        </h3>
                                         <div className={`shrink-0 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${status.code === 'writing' ? 'bg-green-100 text-green-800 border border-green-200' : status.code === 'reading' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
                                             {status.status}
                                         </div>

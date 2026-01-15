@@ -165,8 +165,8 @@ const SetupPanel = ({
     return (
         <div className="container mx-auto pt-20 pb-10 px-4 max-w-6xl">
             <div className="flex items-center space-x-4 mb-6">
-                <img src={setupLogo} alt="Logo" className="h-20 w-20 object-contain" />
-                <h1 className="text-3xl font-bold text-gray-800">Exam Dashboard Setup</h1>
+                <img src={setupLogo} alt="Logo" className="h-32 w-32 object-contain" />
+                <h1 className="text-5xl font-bold text-gray-800">Exam Dashboard Setup</h1>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <div className="lg:col-span-1 space-y-6">
