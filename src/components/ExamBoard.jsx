@@ -80,9 +80,19 @@ const ExamBoard = ({
                         const msRemaining = timings.endTime - currentTime;
                         const isFinalTwoMinutes = status.code === 'writing' && msRemaining <= 120000 && msRemaining > 0;
 
+                        // Calculate progress
+                        const totalDuration = timings.endTime - timings.startTime;
+                        const elapsed = currentTime - timings.startTime;
+                        const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+
                         return (
                             <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-30 grayscale-[0.8] bg-gray-50 border-gray-100' : ''}`}>
-                                <div className={`h-1.5 w-full shrink-0 ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-gray-300'}`}></div>
+                                <div className="h-1.5 w-full shrink-0 bg-gray-200">
+                                    <div
+                                        className={`h-full transition-all duration-1000 ease-linear ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-transparent'}`}
+                                        style={{ width: `${progress}%` }}
+                                    ></div>
+                                </div>
 
                                 <div className={`flex-grow flex flex-col px-4 ${isHighDensity ? 'pt-2 pb-1' : 'pt-3 pb-3'} justify-between min-h-0`}>
                                     {/* Subject Header - Capped at 2 lines */}
