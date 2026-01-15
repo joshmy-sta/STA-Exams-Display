@@ -8,7 +8,9 @@ const ExamBoard = ({
     currentTime,
     activeDay
 }) => {
-    const visibleExams = activeDay.exams.filter(e => !e.isHidden);
+    const visibleExams = activeDay.exams
+        .filter(e => !e.isHidden)
+        .sort((a, b) => getExamTimings(a).endTime - getExamTimings(b).endTime);
     const isHighDensity = visibleExams.length > 6;
 
     return (
