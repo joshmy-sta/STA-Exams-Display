@@ -26,7 +26,7 @@ const App = () => {
   const [importStatus, setImportStatus] = useState("");
 
   // Persisted States
-  const [centerName, setCenterName] = useState(() => loadState('examCenterName', "EXAM BOARD TITLE"));
+  const [centerName, setCenterName] = useState(() => loadState('examCenterName', "STA IB MOCK EXAMS"));
   const [schedule, setSchedule] = useState(() => loadState('examSchedule', [
     { id: 1, name: "New Session", exams: [] }
   ]));

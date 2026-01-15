@@ -29,25 +29,46 @@ export const getExamStatus = (exam) => {
     const now = new Date();
     const { startTime, readingEndTime, endTime } = getExamTimings(exam);
 
+    const formatRemaining = (diffMs) => {
+        const totalSecs = Math.max(0, Math.floor(diffMs / 1000));
+        const totalMins = Math.ceil(diffMs / 60000); // Ceiling for "MM" display matches previous behavior
+        const mins = Math.floor(totalSecs / 60);
+        const secs = totalSecs % 60;
+
+        // Final 30 minutes includes everything from 30:00 down to 00:00
+        if (diffMs <= 30 * 60 * 1000) {
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        return `${totalMins}`;
+    };
+
     if (now < startTime) {
-        const diff = Math.ceil((startTime - now) / 60000);
-        return { status: 'UPCOMING', message: `Starts in ${diff} mins`, color: 'text-blue-600', code: 'upcoming' };
+        const diffMs = startTime - now;
+        return { status: 'UPCOMING', message: `Starts in ${formatRemaining(diffMs)}`, color: 'text-blue-600', code: 'upcoming' };
     } else if (exam.hasReadingTime && now < readingEndTime) {
-        const diff = Math.ceil((readingEndTime - now) / 60000);
-        return { status: 'READING TIME', message: `${diff} mins remaining`, color: 'text-amber-600', code: 'reading' };
+        const diffMs = readingEndTime - now;
+        const color = diffMs <= 5 * 60 * 1000 ? 'text-red-600' : 'text-amber-600';
+        return { status: 'READING TIME', message: `${formatRemaining(diffMs)} remaining`, color: color, code: 'reading' };
     } else if (now < endTime) {
-        const diff = Math.ceil((endTime - now) / 60000);
-        return { status: 'WRITING TIME', message: `${diff} mins remaining`, color: 'text-green-600', code: 'writing' };
+        const diffMs = endTime - now;
+        const color = diffMs <= 5 * 60 * 1000 ? 'text-red-600' : 'text-green-600';
+        return { status: 'WRITING TIME', message: `${formatRemaining(diffMs)} remaining`, color: color, code: 'writing' };
     } else {
-        return { status: 'FINISHED', message: 'Exam Ended', color: 'text-green-600', code: 'finished' };
+        return { status: 'FINISHED', message: 'Exam Finished', color: 'text-[#003057]', code: 'finished' };
     }
 };
 
 export const getWarningStyles = (warningTime, currentTime) => {
     const diff = (warningTime - currentTime) / 60000;
     if (diff < 0) return { container: "bg-gray-100 border-gray-200 opacity-50 grayscale", icon: "text-gray-400", label: "text-gray-400", time: "text-gray-400 line-through" };
-    if (diff <= 3) return { container: "bg-red-50 border-red-200 shadow-md animate-pulse ring-1 ring-red-200", icon: "text-red-500", label: "text-red-700 font-bold", time: "text-red-900 font-bold" };
+    if (diff <= 3) return { container: "bg-red-600 border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-[pulse_0.5s_cubic-bezier(0.4,0,0.6,1)_infinite] ring-2 ring-red-400", icon: "text-white", label: "text-white font-black", time: "text-white font-black" };
     return { container: "bg-gray-50 border-gray-100", icon: "text-gray-400", label: "text-gray-600 font-semibold", time: "text-gray-900 font-bold" };
+};
+
+export const formatDuration = (mins) => {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${h}hr ${m}m`;
 };
 
 export const parseDuration = (durationStr) => {
