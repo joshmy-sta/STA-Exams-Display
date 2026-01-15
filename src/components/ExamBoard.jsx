@@ -65,7 +65,7 @@ const ExamBoard = ({
                         const subjectStyle = getSubjectStyle(exam.subject);
 
                         return (
-                            <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-40 grayscale bg-gray-200' : ''}`}>
+                            <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-30 grayscale-[0.8] bg-gray-50 border-gray-100' : ''}`}>
                                 <div className={`h-1.5 w-full shrink-0 ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-gray-300'}`}></div>
 
                                 <div className="flex-grow flex flex-col px-4 pt-3 pb-3 justify-between min-h-0">
@@ -102,18 +102,18 @@ const ExamBoard = ({
 
                                     {/* Timings Footer - Guaranteed clearance */}
                                     <div className="shrink-0 mt-2">
-                                        <div className={`grid grid-cols-3 gap-1 mb-2 bg-gray-50 rounded p-1.5 border border-gray-100`}>
+                                        <div className={`grid grid-cols-3 gap-1 mb-2 ${status.code === 'finished' ? 'bg-gray-50 border-gray-100 opacity-75' : 'bg-gray-100 border-gray-300'} rounded p-1.5 border`}>
                                             <div className="text-center">
-                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0">Start</div>
-                                                <div className="text-xl md:text-2xl font-mono font-bold text-gray-700 leading-tight">{formatShortTime(timings.startTime)}</div>
+                                                <div className={`text-[8px] ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>Start</div>
+                                                <div className={`text-xl md:text-2xl font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatShortTime(timings.startTime)}</div>
                                             </div>
-                                            <div className="text-center border-l border-gray-200">
-                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0">Duration</div>
-                                                <div className="text-lg md:text-xl font-mono font-bold text-gray-700 leading-tight">{formatDuration(timings.writingDuration)}</div>
+                                            <div className={`text-center border-l ${status.code === 'finished' ? 'border-gray-200' : 'border-gray-300'}`}>
+                                                <div className={`text-[8px] ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>Duration</div>
+                                                <div className={`text-lg md:text-xl font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatDuration(timings.writingDuration)}</div>
                                             </div>
-                                            <div className="text-center border-l border-gray-200">
-                                                <div className="text-[8px] text-gray-400 font-bold uppercase mb-0">End</div>
-                                                <div className="text-xl md:text-2xl font-mono font-bold text-gray-700 leading-tight">{formatShortTime(timings.endTime)}</div>
+                                            <div className={`text-center border-l ${status.code === 'finished' ? 'border-gray-200' : 'border-gray-300'}`}>
+                                                <div className={`text-[8px] ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>End</div>
+                                                <div className={`text-xl md:text-2xl font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatShortTime(timings.endTime)}</div>
                                             </div>
                                         </div>
 

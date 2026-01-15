@@ -60,8 +60,8 @@ export const getExamStatus = (exam) => {
 export const getWarningStyles = (warningTime, currentTime) => {
     const diff = (warningTime - currentTime) / 60000;
     if (diff < 0) return { container: "bg-gray-100 border-gray-200 opacity-50 grayscale", icon: "text-gray-400", label: "text-gray-400", time: "text-gray-400 line-through" };
-    if (diff <= 3) return { container: "bg-red-600 border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-[pulse_1.5s_cubic-bezier(0.4,0,0.6,1)_infinite] ring-2 ring-red-400", icon: "text-white", label: "text-white font-black", time: "text-white font-black" };
-    return { container: "bg-gray-50 border-gray-100", icon: "text-gray-400", label: "text-gray-600 font-semibold", time: "text-gray-900 font-bold" };
+    if (diff <= 3) return { container: "bg-red-600 border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-[pulse_3s_ease-in-out_infinite] ring-2 ring-red-400", icon: "text-white", label: "text-white font-black", time: "text-white font-black" };
+    return { container: "bg-gray-100 border-gray-300", icon: "text-gray-500", label: "text-gray-700 font-bold", time: "text-gray-900 font-black" };
 };
 
 export const formatDuration = (mins) => {
