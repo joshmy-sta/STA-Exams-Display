@@ -64,6 +64,10 @@ const ExamBoard = ({
 
                         const subjectStyle = getSubjectStyle(exam.subject);
 
+                        // Check for final 2 minutes
+                        const msRemaining = timings.endTime - currentTime;
+                        const isFinalTwoMinutes = status.code === 'writing' && msRemaining <= 120000 && msRemaining > 0;
+
                         return (
                             <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-30 grayscale-[0.8] bg-gray-50 border-gray-100' : ''}`}>
                                 <div className={`h-1.5 w-full shrink-0 ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-gray-300'}`}></div>
@@ -111,9 +115,9 @@ const ExamBoard = ({
                                                 <div className={`text-[8px] ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>Duration</div>
                                                 <div className={`text-lg md:text-xl font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatDuration(timings.writingDuration)}</div>
                                             </div>
-                                            <div className={`text-center border-l ${status.code === 'finished' ? 'border-gray-200' : 'border-gray-300'}`}>
-                                                <div className={`text-[8px] ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>End</div>
-                                                <div className={`text-xl md:text-2xl font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatShortTime(timings.endTime)}</div>
+                                            <div className={`text-center ${isFinalTwoMinutes ? 'bg-red-600 border border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-[pulse_3s_ease-in-out_infinite] ring-2 ring-red-400 rounded' : `border-l ${status.code === 'finished' ? 'border-gray-200' : 'border-gray-300'}`}`}>
+                                                <div className={`text-[8px] ${isFinalTwoMinutes ? 'text-white font-black' : (status.code === 'finished' ? 'text-gray-400' : 'text-gray-500')} font-bold uppercase mb-0`}>End</div>
+                                                <div className={`text-xl md:text-2xl font-mono font-bold ${isFinalTwoMinutes ? 'text-white' : (status.code === 'finished' ? 'text-gray-400' : 'text-gray-900')} leading-tight`}>{formatShortTime(timings.endTime)}</div>
                                             </div>
                                         </div>
 
