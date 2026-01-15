@@ -26,17 +26,9 @@ const App = () => {
   const [importStatus, setImportStatus] = useState("");
 
   // Persisted States
-  const [centerName, setCenterName] = useState(() => loadState('examCenterName', "MOCK EXAMINATION WEEK"));
+  const [centerName, setCenterName] = useState(() => loadState('examCenterName', "EXAM BOARD TITLE"));
   const [schedule, setSchedule] = useState(() => loadState('examSchedule', [
-    {
-      id: 1, name: "Day 1", exams: [
-        { id: 101, subject: "Biology/Chemistry/Physics/SEHS HL P2", startTime: "08:15", duration: 150, readingTime: 5, hasReadingTime: true, isHidden: false },
-        { id: 102, subject: "Comp Sci HL P1", startTime: "08:15", duration: 130, readingTime: 5, hasReadingTime: true, isHidden: false },
-        { id: 103, subject: "ESS SL P2", startTime: "08:15", duration: 120, readingTime: 5, hasReadingTime: true, isHidden: false },
-        { id: 104, subject: "Bio/Chem/Phys/SEHS SL P2 / Comp Sci SL P1 / DT HL P3", startTime: "08:15", duration: 90, readingTime: 5, hasReadingTime: true, isHidden: false }
-      ]
-    },
-    { id: 2, name: "Day 2", exams: [] }
+    { id: 1, name: "New Session", exams: [] }
   ]));
 
   // --- EFFECTS ---
