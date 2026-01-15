@@ -83,9 +83,18 @@ const ExamBoard = ({
                         const isFinalTwoMinutes = status.code === 'writing' && msRemaining <= 120000 && msRemaining > 0;
 
                         // Calculate progress
-                        const totalDuration = timings.endTime - timings.startTime;
-                        const elapsed = currentTime - timings.startTime;
-                        const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+                        let progress = 0;
+                        if (status.code === 'reading') {
+                            const totalDuration = timings.readingEndTime - timings.startTime;
+                            const elapsed = currentTime - timings.startTime;
+                            progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+                        } else if (status.code === 'writing') {
+                            const totalDuration = timings.endTime - timings.readingEndTime;
+                            const elapsed = currentTime - timings.readingEndTime;
+                            progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+                        } else if (status.code === 'finished') {
+                            progress = 100;
+                        }
 
                         return (
                             <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-30 grayscale-[0.8] bg-gray-50 border-gray-100' : ''}`}>
