@@ -11,7 +11,15 @@ const ExamBoard = ({
     const visibleExams = activeDay.exams
         .filter(e => !e.isHidden)
         .sort((a, b) => getExamTimings(a).endTime - getExamTimings(b).endTime);
-    const isHighDensity = visibleExams.length > 6;
+
+    // Grid Layout Logic
+    const examCount = visibleExams.length;
+    const isHighDensity = examCount > 6;
+    let gridClass = "grid-cols-3 grid-rows-2";
+
+    if (examCount === 1) gridClass = "grid-cols-1 grid-rows-1";
+    else if (examCount === 2) gridClass = "grid-cols-2 grid-rows-1";
+    else if (isHighDensity) gridClass = "grid-cols-3 grid-rows-3";
 
     return (
         <div className="h-screen flex flex-col overflow-hidden">
@@ -38,7 +46,7 @@ const ExamBoard = ({
             </div>
 
             <div className="flex-grow bg-gray-50 p-4 pb-12 overflow-hidden">
-                <div className={`w-full h-full grid grid-cols-3 ${isHighDensity ? 'grid-rows-3' : 'grid-rows-2'} gap-4`}>
+                <div className={`w-full h-full grid ${gridClass} gap-4`}>
                     {visibleExams.length === 0 && (
                         <div className={`col-span-3 ${isHighDensity ? 'row-span-3' : 'row-span-2'} flex flex-col items-center justify-center text-gray-400`}>
                             <Calendar size={64} className="mb-4 opacity-20" />
