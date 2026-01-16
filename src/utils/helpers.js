@@ -54,15 +54,15 @@ export const getExamStatus = (exam) => {
 
     if (now < startTime) {
         const diffMs = startTime - now;
-        const showMinutesLabel = diffMs <= 60 * 60 * 1000;
+        const showMinutesLabel = diffMs > 30 * 60 * 1000 && diffMs <= 60 * 60 * 1000;
         return { status: 'UPCOMING', message: `Starts in ${formatRemaining(diffMs)}`, color: 'text-blue-600', code: 'upcoming', showMinutesLabel };
     } else if (exam.hasReadingTime && now < readingEndTime) {
         const diffMs = readingEndTime - now;
-        const showMinutesLabel = diffMs <= 60 * 60 * 1000;
+        const showMinutesLabel = diffMs > 30 * 60 * 1000 && diffMs <= 60 * 60 * 1000;
         return { status: 'READING TIME', message: `${formatRemaining(diffMs)} remaining`, color: 'text-amber-600', code: 'reading', showMinutesLabel };
     } else if (now < endTime) {
         const diffMs = endTime - now;
-        const showMinutesLabel = diffMs <= 60 * 60 * 1000;
+        const showMinutesLabel = diffMs > 30 * 60 * 1000 && diffMs <= 60 * 60 * 1000;
         const color = diffMs <= 5 * 60 * 1000 ? 'text-red-600' : 'text-green-600';
         return { status: 'WRITING TIME', message: `${formatRemaining(diffMs)} remaining`, color: color, code: 'writing', showMinutesLabel };
     } else {
