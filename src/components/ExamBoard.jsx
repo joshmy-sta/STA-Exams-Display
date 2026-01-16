@@ -135,7 +135,7 @@ const ExamBoard = ({
                                                 <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-3xl md:text-5xl' : 'text-4xl md:text-6xl')} font-bold leading-none tracking-tight font-mono`}>
                                                     {status.message.replace(/remaining|Starts in/g, '').trim()}
                                                 </div>
-                                                {status.code !== 'finished' && (
+                                                {status.code !== 'finished' && status.showMinutesLabel && (
                                                     <span className={`${isHighDensity ? 'text-[8px] md:text-[9px]' : 'text-[10px] md:text-xs'} font-bold ml-1.5 lowercase opacity-80`}>minutes</span>
                                                 )}
                                             </div>

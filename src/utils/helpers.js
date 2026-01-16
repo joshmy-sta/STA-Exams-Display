@@ -31,29 +31,42 @@ export const getExamStatus = (exam) => {
 
     const formatRemaining = (diffMs) => {
         const totalSecs = Math.max(0, Math.floor(diffMs / 1000));
-        const totalMins = Math.ceil(diffMs / 60000); // Ceiling for "MM" display matches previous behavior
-        const mins = Math.floor(totalSecs / 60);
-        const secs = totalSecs % 60;
+
+        // More than 60 minutes
+        if (diffMs > 60 * 60 * 1000) {
+            const totalMins = Math.ceil(diffMs / 60000);
+            const h = Math.floor(totalMins / 60);
+            const m = totalMins % 60;
+            return `${h}h ${m.toString().padStart(2, '0')}m`;
+        }
 
         // Final 30 minutes includes everything from 30:00 down to 00:00
         if (diffMs <= 30 * 60 * 1000) {
+            const mins = Math.floor(totalSecs / 60);
+            const secs = totalSecs % 60;
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
+
+        // Between 30 and 60 minutes
+        const totalMins = Math.ceil(diffMs / 60000);
         return `${totalMins}`;
     };
 
     if (now < startTime) {
         const diffMs = startTime - now;
-        return { status: 'UPCOMING', message: `Starts in ${formatRemaining(diffMs)}`, color: 'text-blue-600', code: 'upcoming' };
+        const showMinutesLabel = diffMs <= 60 * 60 * 1000;
+        return { status: 'UPCOMING', message: `Starts in ${formatRemaining(diffMs)}`, color: 'text-blue-600', code: 'upcoming', showMinutesLabel };
     } else if (exam.hasReadingTime && now < readingEndTime) {
         const diffMs = readingEndTime - now;
-        return { status: 'READING TIME', message: `${formatRemaining(diffMs)} remaining`, color: 'text-amber-600', code: 'reading' };
+        const showMinutesLabel = diffMs <= 60 * 60 * 1000;
+        return { status: 'READING TIME', message: `${formatRemaining(diffMs)} remaining`, color: 'text-amber-600', code: 'reading', showMinutesLabel };
     } else if (now < endTime) {
         const diffMs = endTime - now;
+        const showMinutesLabel = diffMs <= 60 * 60 * 1000;
         const color = diffMs <= 5 * 60 * 1000 ? 'text-red-600' : 'text-green-600';
-        return { status: 'WRITING TIME', message: `${formatRemaining(diffMs)} remaining`, color: color, code: 'writing' };
+        return { status: 'WRITING TIME', message: `${formatRemaining(diffMs)} remaining`, color: color, code: 'writing', showMinutesLabel };
     } else {
-        return { status: 'FINISHED', message: 'Exam Finished', color: 'text-[#003057]', code: 'finished' };
+        return { status: 'FINISHED', message: 'Exam Finished', color: 'text-[#003057]', code: 'finished', showMinutesLabel: false };
     }
 };
 
