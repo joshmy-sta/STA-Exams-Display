@@ -115,7 +115,7 @@ const ExamBoard = ({
 
                                 <div className={`flex-grow flex flex-col px-4 ${isHighDensity ? 'pt-2 pb-1' : 'pt-3 pb-3'} justify-between min-h-0`}>
                                     {/* Subject Header - Row layout with flex constraints */}
-                                    <div className={`shrink-0 flex justify-between items-start gap-2 mb-1`}>
+                                    <div className={`shrink-0 flex justify-between items-start gap-2 mb-1 ${isHighDensity ? 'h-12' : 'h-16'}`}>
                                         <h3
                                             className="font-bold text-gray-900 line-clamp-2 leading-tight flex-1 min-w-0"
                                             style={{ fontSize: subjectStyle.fontSize, lineHeight: subjectStyle.lineHeight }}
@@ -132,7 +132,7 @@ const ExamBoard = ({
                                     <div className={`flex-grow flex flex-col items-center justify-center min-h-0 ${isHighDensity ? '-mt-4' : 'pb-4'}`}>
                                         <div className={`text-center ${status.color}`}>
                                             <div className="flex items-baseline justify-center">
-                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-3xl md:text-4xl' : 'text-5xl md:text-7xl')} font-bold leading-none tracking-tight font-mono`}>
+                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-3xl md:text-4xl' : 'text-7xl md:text-9xl')} font-bold leading-none tracking-tight font-mono`}>
                                                     {status.message.replace(/remaining|Starts in/g, '').trim()}
                                                 </div>
                                                 {status.code !== 'finished' && status.showMinutesLabel && (
