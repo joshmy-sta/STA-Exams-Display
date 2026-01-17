@@ -15,6 +15,7 @@ const ExamBoard = ({
     // Grid Layout Logic
     const examCount = visibleExams.length;
     const isHighDensity = examCount > 6;
+    const is2x2 = examCount === 2;
     let gridClass = "grid-cols-3 grid-rows-2";
 
     if (examCount === 1) gridClass = "grid-cols-1 grid-rows-1";
@@ -132,7 +133,7 @@ const ExamBoard = ({
                                     <div className={`flex-grow flex flex-col items-center justify-center min-h-0 ${isHighDensity ? '-mt-4' : 'pb-4'}`}>
                                         <div className={`text-center ${status.color}`}>
                                             <div className="flex items-baseline justify-center">
-                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-3xl md:text-4xl' : 'text-7xl md:text-9xl')} font-bold leading-none tracking-tight font-mono`}>
+                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-3xl md:text-4xl' : (is2x2 ? 'text-7xl md:text-9xl' : 'text-5xl md:text-7xl'))} font-bold leading-none tracking-tight font-mono`}>
                                                     {status.message.replace(/remaining|Starts in/g, '').trim()}
                                                 </div>
                                                 {status.code !== 'finished' && status.showMinutesLabel && (
