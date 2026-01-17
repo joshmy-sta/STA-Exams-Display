@@ -63,24 +63,24 @@ const ExamBoard = ({
 
                         const getSubjectStyle = (text) => {
                             const len = text.length;
-                            // Scale down for high density - slightly larger than before
+                            // Scale down for high density
                             if (isHighDensity) {
-                                let fontSize = '1.1rem';
+                                let fontSize = '1.0rem';
                                 let lineHeight = '1.1';
-                                if (len > 80) { fontSize = '0.8rem'; lineHeight = '1'; }
-                                else if (len > 60) { fontSize = '0.9rem'; lineHeight = '1'; }
-                                else if (len > 45) { fontSize = '0.95rem'; lineHeight = '1'; }
-                                else if (len > 30) { fontSize = '1.0rem'; lineHeight = '1'; }
+                                if (len > 80) { fontSize = '0.7rem'; lineHeight = '1.1'; }
+                                else if (len > 60) { fontSize = '0.8rem'; lineHeight = '1.1'; }
+                                else if (len > 45) { fontSize = '0.85rem'; lineHeight = '1.1'; }
+                                else if (len > 30) { fontSize = '0.9rem'; lineHeight = '1.1'; }
                                 return { fontSize, lineHeight };
                             }
 
                             // Standard sizes
-                            let fontSize = '1.25rem';
-                            let lineHeight = '1.2';
-                            if (len > 80) { fontSize = '0.85rem'; lineHeight = '1.1'; }
-                            else if (len > 60) { fontSize = '1rem'; lineHeight = '1.1'; }
-                            else if (len > 45) { fontSize = '1.15rem'; lineHeight = '1.2'; }
-                            else if (len > 30) { fontSize = '1.35rem'; lineHeight = '1.2'; }
+                            let fontSize = '2.0rem';
+                            let lineHeight = '1.1';
+                            if (len > 80) { fontSize = '1.1rem'; lineHeight = '1.1'; }
+                            else if (len > 60) { fontSize = '1.25rem'; lineHeight = '1.1'; }
+                            else if (len > 45) { fontSize = '1.4rem'; lineHeight = '1.1'; }
+                            else if (len > 30) { fontSize = '1.6rem'; lineHeight = '1.1'; }
                             return { fontSize, lineHeight };
                         };
 
@@ -114,11 +114,11 @@ const ExamBoard = ({
                                 </div>
 
                                 <div className={`flex-grow flex flex-col px-4 ${isHighDensity ? 'pt-2 pb-1' : 'pt-3 pb-3'} justify-between min-h-0`}>
-                                    {/* Subject Header - Capped at 2 lines */}
-                                    <div className={`${isHighDensity ? 'h-9 mb-0.5' : 'h-12 mb-1'} shrink-0 flex justify-between items-start gap-2`}>
+                                    {/* Subject Header - Row layout with flex constraints */}
+                                    <div className={`shrink-0 flex justify-between items-start gap-2 mb-1`}>
                                         <h3
-                                            className="font-bold text-gray-900 line-clamp-2 leading-tight"
-                                            style={{ fontSize: subjectStyle.fontSize }}
+                                            className="font-bold text-gray-900 line-clamp-2 leading-tight flex-1 min-w-0"
+                                            style={{ fontSize: subjectStyle.fontSize, lineHeight: subjectStyle.lineHeight }}
                                             title={exam.subject}
                                         >
                                             {exam.subject}
@@ -129,10 +129,10 @@ const ExamBoard = ({
                                     </div>
 
                                     {/* Countdown Area - Consistent large size */}
-                                    <div className="flex-grow flex flex-col items-center justify-center min-h-0">
+                                    <div className={`flex-grow flex flex-col items-center justify-center min-h-0 ${isHighDensity ? '-mt-4' : 'pb-4'}`}>
                                         <div className={`text-center ${status.color}`}>
                                             <div className="flex items-baseline justify-center">
-                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-3xl md:text-5xl' : 'text-4xl md:text-6xl')} font-bold leading-none tracking-tight font-mono`}>
+                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-3xl md:text-4xl' : 'text-5xl md:text-7xl')} font-bold leading-none tracking-tight font-mono`}>
                                                     {status.message.replace(/remaining|Starts in/g, '').trim()}
                                                 </div>
                                                 {status.code !== 'finished' && status.showMinutesLabel && (
@@ -140,7 +140,7 @@ const ExamBoard = ({
                                                 )}
                                             </div>
                                             {status.code !== 'finished' && (
-                                                <div className={`${isHighDensity ? 'text-[7px] mt-0' : 'text-[8px] mt-0.5'} font-bold uppercase tracking-[0.25em] text-gray-400`}>Time Left</div>
+                                                <div className={`${isHighDensity ? 'text-[6px] mt-0.5' : 'text-[8px] mt-0.5'} font-bold uppercase tracking-[0.25em] text-gray-500`}>Time Remaining</div>
                                             )}
                                         </div>
                                     </div>
