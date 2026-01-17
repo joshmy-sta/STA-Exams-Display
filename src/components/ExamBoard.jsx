@@ -64,24 +64,35 @@ const ExamBoard = ({
 
                         const getSubjectStyle = (text) => {
                             const len = text.length;
-                            // Scale down for high density
+                            // Scale UP for high density (3x3)
                             if (isHighDensity) {
-                                let fontSize = '1.0rem';
+                                let fontSize = '1.4rem';
                                 let lineHeight = '1.1';
-                                if (len > 80) { fontSize = '0.7rem'; lineHeight = '1.1'; }
-                                else if (len > 60) { fontSize = '0.8rem'; lineHeight = '1.1'; }
-                                else if (len > 45) { fontSize = '0.85rem'; lineHeight = '1.1'; }
-                                else if (len > 30) { fontSize = '0.9rem'; lineHeight = '1.1'; }
+                                if (len > 80) { fontSize = '0.95rem'; lineHeight = '1.1'; }
+                                else if (len > 60) { fontSize = '1.05rem'; lineHeight = '1.1'; }
+                                else if (len > 45) { fontSize = '1.15rem'; lineHeight = '1.1'; }
+                                else if (len > 30) { fontSize = '1.25rem'; lineHeight = '1.1'; }
                                 return { fontSize, lineHeight };
                             }
 
-                            // Standard sizes
-                            let fontSize = '2.0rem';
+                            // 2x2 display - keep larger
+                            if (is2x2) {
+                                let fontSize = '2.0rem';
+                                let lineHeight = '1.1';
+                                if (len > 80) { fontSize = '1.1rem'; lineHeight = '1.1'; }
+                                else if (len > 60) { fontSize = '1.25rem'; lineHeight = '1.1'; }
+                                else if (len > 45) { fontSize = '1.4rem'; lineHeight = '1.1'; }
+                                else if (len > 30) { fontSize = '1.6rem'; lineHeight = '1.1'; }
+                                return { fontSize, lineHeight };
+                            }
+
+                            // 2x3 display - smaller, with extra reduction for 2-line titles
+                            let fontSize = '1.75rem';
                             let lineHeight = '1.1';
-                            if (len > 80) { fontSize = '1.1rem'; lineHeight = '1.1'; }
-                            else if (len > 60) { fontSize = '1.25rem'; lineHeight = '1.1'; }
-                            else if (len > 45) { fontSize = '1.4rem'; lineHeight = '1.1'; }
-                            else if (len > 30) { fontSize = '1.6rem'; lineHeight = '1.1'; }
+                            if (len > 80) { fontSize = '0.95rem'; lineHeight = '1.1'; }
+                            else if (len > 60) { fontSize = '1.05rem'; lineHeight = '1.1'; }
+                            else if (len > 45) { fontSize = '1.2rem'; lineHeight = '1.1'; }
+                            else if (len > 30) { fontSize = '1.4rem'; lineHeight = '1.1'; }
                             return { fontSize, lineHeight };
                         };
 
@@ -133,7 +144,7 @@ const ExamBoard = ({
                                     <div className={`flex-grow flex flex-col items-center justify-center min-h-0 ${isHighDensity ? '-mt-4' : 'pb-4'}`}>
                                         <div className={`text-center ${status.color}`}>
                                             <div className="flex items-baseline justify-center">
-                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-3xl md:text-4xl' : (is2x2 ? 'text-7xl md:text-9xl' : 'text-5xl md:text-7xl'))} font-bold leading-none tracking-tight font-mono`}>
+                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-4xl md:text-5xl' : (is2x2 ? 'text-7xl md:text-9xl' : 'text-5xl md:text-7xl'))} font-bold leading-none tracking-tight font-mono`}>
                                                     {status.message.replace(/remaining|Starts in/g, '').trim()}
                                                 </div>
                                                 {status.code !== 'finished' && status.showMinutesLabel && (
