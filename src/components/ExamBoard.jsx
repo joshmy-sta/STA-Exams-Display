@@ -144,7 +144,7 @@ const ExamBoard = ({
                                     <div className={`flex-grow flex flex-col items-center justify-center min-h-0 ${isHighDensity ? '-mt-4' : 'pb-4'}`}>
                                         <div className={`text-center ${status.color}`}>
                                             <div className="flex items-baseline justify-center">
-                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-4xl md:text-5xl' : (is2x2 ? 'text-7xl md:text-9xl' : 'text-5xl md:text-7xl'))} font-bold leading-none tracking-tight font-mono`}>
+                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-4xl md:text-5xl' : (examCount <= 2 ? 'text-7xl md:text-9xl' : 'text-5xl md:text-7xl'))} font-bold leading-none tracking-tight font-mono`}>
                                                     {status.message.replace(/remaining|Starts in/g, '').trim()}
                                                 </div>
                                                 {status.code !== 'finished' && status.showMinutesLabel && (
