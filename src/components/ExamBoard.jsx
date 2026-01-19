@@ -10,7 +10,14 @@ const ExamBoard = ({
 }) => {
     const visibleExams = activeDay.exams
         .filter(e => !e.isHidden)
-        .sort((a, b) => getExamTimings(a).endTime - getExamTimings(b).endTime);
+        .sort((a, b) => {
+            const endTimeDiff = getExamTimings(a).endTime - getExamTimings(b).endTime;
+            // If end times are the same, sort by exam ID for stable ordering
+            if (endTimeDiff === 0) {
+                return a.id.localeCompare(b.id);
+            }
+            return endTimeDiff;
+        });
 
     // Grid Layout Logic
     const examCount = visibleExams.length;

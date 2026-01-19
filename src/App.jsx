@@ -77,7 +77,7 @@ const App = () => {
   const duplicateExam = (examId, extraTimePercent) => {
     const original = activeDay.exams.find(e => e.id === examId);
     if (!original) return;
-    const newDuration = Math.ceil(parseInt(original.duration) * (1 + extraTimePercent / 100));
+    const newDuration = Math.floor(parseInt(original.duration) * (1 + extraTimePercent / 100));
     const etExams = activeDay.exams.filter(e => /^ET-\d+$/.test(e.subject));
     let maxNum = 0;
     etExams.forEach(e => { const num = parseInt(e.subject.replace('ET-', '')); if (!isNaN(num) && num > maxNum) maxNum = num; });
