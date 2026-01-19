@@ -14,7 +14,7 @@ const ExamBoard = ({
             const endTimeDiff = getExamTimings(a).endTime - getExamTimings(b).endTime;
             // If end times are the same, sort by exam ID for stable ordering
             if (endTimeDiff === 0) {
-                return a.id.localeCompare(b.id);
+                return a.id - b.id;
             }
             return endTimeDiff;
         });
