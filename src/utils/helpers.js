@@ -5,7 +5,7 @@ export const formatDate = (date) => date.toLocaleDateString('en-GB', { weekday: 
 export const getExamTimings = (exam) => {
     const [startH, startM] = exam.startTime.split(':').map(Number);
     const startTime = new Date();
-    startTime.setHours(startH, startM, 0);
+    startTime.setHours(startH, startM, 0, 0);
 
     const readingDuration = exam.hasReadingTime ? parseInt(exam.readingTime) : 0;
     const writingDuration = parseInt(exam.duration);
