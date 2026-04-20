@@ -1,7 +1,7 @@
 name: Deploy Exam Display
 on:
   push:
-    branches: [ main ]  # Check if Josh uses 'main' or 'master'
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -12,5 +12,6 @@ jobs:
 
       - name: Rebuild Docker Container
         run: |
-          # Navigate to the project folder and rebuild
-          docker-compose up -d --build
+          cd /var/www/moodle/STA-Exams-Display
+          # We use 'docker compose' (no hyphen) to use the modern version
+          sudo docker compose up -d --build
