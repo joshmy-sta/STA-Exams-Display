@@ -244,7 +244,7 @@ const SetupPanel = ({
                                     className="w-full h-32 p-3 border border-gray-300 rounded-md text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none resize-y mb-3"
                                 />
                                 <div className="flex justify-between items-center">
-                                    <span className={`text-sm font-bold ${importStatus.includes("No") ? "text-red-500" : "text-green-600"}`}>{importStatus}</span>
+                                    <span className={`text-sm font-bold ${importStatus.includes("No") ? "text-red-500" : "text-green-800"}`}>{importStatus}</span>
                                     <button onClick={handleBulkImport} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-bold">Process & Add Exams</button>
                                 </div>
                             </div>
@@ -303,7 +303,7 @@ const SetupPanel = ({
                                             </span>
                                             <button
                                                 onClick={handleImportAllSessions}
-                                                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm font-bold transition-colors shadow-sm"
+                                                className="bg-green-800 text-white px-4 py-2 rounded hover:bg-green-900 text-sm font-bold transition-colors shadow-sm"
                                             >
                                                 Import ALL sessions
                                             </button>
@@ -328,7 +328,7 @@ const SetupPanel = ({
                                     <div className="flex items-center space-x-2">
                                         <button
                                             onClick={() => toggleHideExam(exam.id)}
-                                            className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${exam.isHidden ? 'bg-gray-200 text-gray-600' : 'bg-green-100 text-green-700'}`}
+                                            className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${exam.isHidden ? 'bg-gray-200 text-gray-600' : 'bg-green-200 text-green-900'}`}
                                         >
                                             {exam.isHidden ? <EyeOff size={14} className="mr-1" /> : <Eye size={14} className="mr-1" />} <span>{exam.isHidden ? "Hidden" : "Visible"}</span>
                                         </button>

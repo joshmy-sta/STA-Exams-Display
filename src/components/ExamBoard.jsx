@@ -127,7 +127,7 @@ const ExamBoard = ({
                             <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-30 grayscale-[0.8] bg-gray-50 border-gray-100' : ''}`}>
                                 <div className="h-1.5 w-full shrink-0 bg-gray-200">
                                     <div
-                                        className={`h-full transition-all duration-1000 ease-linear ${status.code === 'writing' ? 'bg-green-500 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-transparent'}`}
+                                        className={`h-full transition-all duration-1000 ease-linear ${status.code === 'writing' ? 'bg-green-700 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-transparent'}`}
                                         style={{ width: `${progress}%` }}
                                     ></div>
                                 </div>
@@ -142,7 +142,7 @@ const ExamBoard = ({
                                         >
                                             {exam.subject}
                                         </h3>
-                                        <div className={`shrink-0 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${status.code === 'writing' ? 'bg-green-100 text-green-800 border border-green-200' : status.code === 'reading' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+                                        <div className={`shrink-0 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${status.code === 'writing' ? 'bg-green-200 text-green-900 border border-green-400' : status.code === 'reading' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
                                             {status.status}
                                         </div>
                                     </div>

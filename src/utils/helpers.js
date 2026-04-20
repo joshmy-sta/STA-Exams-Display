@@ -63,7 +63,7 @@ export const getExamStatus = (exam) => {
     } else if (now < endTime) {
         const diffMs = endTime - now;
         const showMinutesLabel = diffMs > 30 * 60 * 1000 && diffMs <= 60 * 60 * 1000;
-        const color = diffMs <= 5 * 60 * 1000 ? 'text-red-600' : 'text-green-600';
+        const color = diffMs <= 5 * 60 * 1000 ? 'text-red-600' : 'text-green-800';
         return { status: 'WRITING TIME', message: `${formatRemaining(diffMs)} remaining`, color: color, code: 'writing', showMinutesLabel };
     } else {
         return { status: 'FINISHED', message: 'Exam Finished', color: 'text-[#003057]', code: 'finished', showMinutesLabel: false };
