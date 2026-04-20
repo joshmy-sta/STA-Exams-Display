@@ -13,5 +13,5 @@ jobs:
       - name: Rebuild Docker Container
         run: |
           cd /var/www/moodle/STA-Exams-Display
-          # We use 'docker compose' (no hyphen) to use the modern version
+          # Using the modern 'docker compose' we just installed
           sudo docker compose up -d --build
