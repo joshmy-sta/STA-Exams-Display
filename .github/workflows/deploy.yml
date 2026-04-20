@@ -1,0 +1,16 @@
+name: Deploy Exam Display
+on:
+  push:
+    branches: [ main ]  # Check if Josh uses 'main' or 'master'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Rebuild Docker Container
+        run: |
+          # Navigate to the project folder and rebuild
+          docker-compose up -d --build
