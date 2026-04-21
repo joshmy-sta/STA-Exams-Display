@@ -39,7 +39,7 @@ const ExamBoard = ({
                             <h1 className="text-4xl md:text-6xl font-bold tracking-wider uppercase truncate">{centerName}</h1>
                             <h2 className="text-xl md:text-2xl mt-2 font-light flex items-center opacity-90">
                                 <span className="mr-4">{formatDate(currentTime)}</span>
-                                <span className="px-2 py-0.5 bg-[#fcc314]/20 rounded text-sm text-[#fcc314] uppercase tracking-widest">{activeDay.name}</span>
+                                <span className="px-2 py-0.5 border border-white/40 rounded text-sm text-white uppercase tracking-widest bg-transparent">{activeDay.name}</span>
                             </h2>
                         </div>
                     </div>
