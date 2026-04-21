@@ -245,7 +245,7 @@ const SetupPanel = ({
                                 />
                                 <div className="flex justify-between items-center">
                                     <span className={`text-sm font-bold ${importStatus.includes("No") ? "text-red-500" : "text-green-800"}`}>{importStatus}</span>
-                                    <button onClick={handleBulkImport} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-bold">Process & Add Exams</button>
+                                    <button onClick={handleBulkImport} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-bold">Process &amp; Add Exams</button>
                                 </div>
                             </div>
                         )}
