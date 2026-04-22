@@ -119,3 +119,10 @@ export const parseDuration = (durationStr) => {
     }
     return parseInt(durationStr) || 0;
 };
+export const formatMs = (ms) => {
+    if (!ms || ms < 0) return "0:00";
+    const totalSecs = Math.floor(ms / 1000);
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+};

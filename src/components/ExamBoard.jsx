@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Clock, Calendar, Bell, Play, Pause } from './Icons';
-import { formatTime, formatDate, formatShortTime, getExamStatus, getExamTimings, getWarningStyles, formatDuration } from '../utils/helpers';
+import { formatTime, formatDate, formatShortTime, getExamStatus, getExamTimings, getWarningStyles, formatDuration, formatMs } from '../utils/helpers';
 import logo from '../assets/logo.png';
 
 const ExamBoard = ({
@@ -149,13 +149,24 @@ const ExamBoard = ({
                                             </div>
                                             
                                             {exam.hasRestBreak && ['writing', 'reading', 'paused'].includes(status.code) && (
-                                                <button 
-                                                    onClick={() => togglePauseExam(exam.id)}
-                                                    className={`p-1 rounded-full transition-colors ${exam.isPaused ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-red-500'}`}
-                                                    title={exam.isPaused ? "Resume Exam" : "Pause for Rest Break"}
-                                                >
-                                                    {exam.isPaused ? <Play size={12} fill="currentColor" /> : <Pause size={12} fill="currentColor" />}
-                                                </button>
+                                                <div className="flex flex-col items-center gap-1 mt-1">
+                                                    <button 
+                                                        onClick={() => togglePauseExam(exam.id)}
+                                                        className={`p-1.5 rounded-full transition-colors ${exam.isPaused ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-red-500'}`}
+                                                        title={exam.isPaused ? "Resume Exam" : "Pause for Rest Break"}
+                                                    >
+                                                        {exam.isPaused ? <Play size={18} fill="currentColor" /> : <Pause size={18} fill="currentColor" />}
+                                                    </button>
+                                                    
+                                                    {((exam.totalPausedMs || 0) > 0 || exam.isPaused) && (
+                                                        <div className="flex flex-col items-center">
+                                                            <div className="text-[7px] font-bold text-gray-400 uppercase leading-none">Rest Used</div>
+                                                            <div className="text-[10px] font-mono font-bold text-gray-600 leading-none mt-0.5">
+                                                                {formatMs((exam.totalPausedMs || 0) + (exam.isPaused ? (currentTime.getTime() - new Date(exam.pausedAt).getTime()) : 0))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
                                     </div>
