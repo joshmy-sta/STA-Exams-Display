@@ -125,13 +125,15 @@ const ExamBoard = ({
                         }
 
                         return (
-                            <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' ? 'opacity-30 grayscale-[0.8] bg-gray-50 border-gray-100' : ''}`}>
-                                <div className="h-1.5 w-full shrink-0 bg-gray-200">
-                                    <div
-                                        className={`h-full transition-all duration-1000 ease-linear ${status.code === 'writing' ? 'bg-green-700 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-transparent'}`}
-                                        style={{ width: `${progress}%` }}
-                                    ></div>
-                                </div>
+                            <div key={exam.id} className={`bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 flex flex-col h-full relative ${status.code === 'finished' && !exam.isListening ? 'opacity-30 grayscale-[0.8] bg-gray-50 border-gray-100' : ''}`}>
+                                {!exam.isListening && (
+                                    <div className="h-1.5 w-full shrink-0 bg-gray-200">
+                                        <div
+                                            className={`h-full transition-all duration-1000 ease-linear ${status.code === 'writing' ? 'bg-green-700 animate-pulse' : status.code === 'reading' ? 'bg-amber-500 animate-pulse' : status.code === 'finished' ? 'bg-[#003057]' : 'bg-transparent'}`}
+                                            style={{ width: `${progress}%` }}
+                                        ></div>
+                                    </div>
+                                )}
 
                                 <div className={`flex-grow flex flex-col px-4 ${isHighDensity ? 'pt-2 pb-1' : 'pt-3 pb-3'} justify-between min-h-0`}>
                                     {/* Subject Header - Row layout with flex constraints */}
@@ -173,48 +175,60 @@ const ExamBoard = ({
 
                                     {/* Countdown Area - Consistent large size */}
                                     <div className={`flex-grow flex flex-col items-center justify-center min-h-0 ${isHighDensity ? '-mt-4' : 'pb-4'}`}>
-                                        <div className={`text-center ${status.color}`}>
-                                            <div className="flex items-baseline justify-center">
-                                                <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-4xl md:text-5xl' : (examCount <= 2 ? 'text-7xl md:text-9xl' : 'text-5xl md:text-7xl'))} font-bold leading-none tracking-tight font-mono`}>
-                                                    {status.message.replace(/remaining|Starts in/g, '').trim()}
+                                        {exam.isListening ? (
+                                            <div className="text-center px-4">
+                                                <div className={`${isHighDensity ? 'text-lg' : 'text-2xl'} font-bold text-blue-900 leading-tight italic`}>
+                                                    "Three beeps indicate that the examination has ended."
                                                 </div>
-                                                {status.code !== 'finished' && status.showMinutesLabel && (
-                                                    <span className={`${isHighDensity ? 'text-[8px] md:text-[9px]' : 'text-[10px] md:text-xs'} font-bold ml-1.5 lowercase opacity-80`}>minutes</span>
+                                            </div>
+                                        ) : (
+                                            <div className={`text-center ${status.color}`}>
+                                                <div className="flex items-baseline justify-center">
+                                                    <div className={`${status.code === 'finished' ? (isHighDensity ? 'text-lg md:text-xl' : 'text-xl md:text-2xl') : (isHighDensity ? 'text-4xl md:text-5xl' : (examCount <= 2 ? 'text-7xl md:text-9xl' : 'text-5xl md:text-7xl'))} font-bold leading-none tracking-tight font-mono`}>
+                                                        {status.message.replace(/remaining|Starts in/g, '').trim()}
+                                                    </div>
+                                                    {status.code !== 'finished' && status.showMinutesLabel && (
+                                                        <span className={`${isHighDensity ? 'text-[8px] md:text-[9px]' : 'text-[10px] md:text-xs'} font-bold ml-1.5 lowercase opacity-80`}>minutes</span>
+                                                    )}
+                                                </div>
+                                                {status.code !== 'finished' && (
+                                                    <div className={`${isHighDensity ? 'text-[6px] mt-0.5' : 'text-[8px] mt-0.5'} font-bold uppercase tracking-[0.25em] text-gray-500`}>Time Remaining</div>
                                                 )}
                                             </div>
-                                            {status.code !== 'finished' && (
-                                                <div className={`${isHighDensity ? 'text-[6px] mt-0.5' : 'text-[8px] mt-0.5'} font-bold uppercase tracking-[0.25em] text-gray-500`}>Time Remaining</div>
-                                            )}
-                                        </div>
+                                        )}
                                     </div>
 
                                     {/* Timings Footer - Guaranteed clearance */}
                                     <div className={`shrink-0 ${isHighDensity ? 'mt-0.5' : 'mt-2'}`}>
-                                        <div className={`grid grid-cols-3 gap-1 ${isHighDensity ? 'mb-1 p-0.5' : 'mb-2 p-1.5'} ${status.code === 'finished' ? 'bg-gray-50 border-gray-100 opacity-75' : 'bg-gray-100 border-gray-300'} rounded border`}>
+                                        <div className={`grid ${exam.isListening ? 'grid-cols-2' : 'grid-cols-3'} gap-1 ${isHighDensity ? 'mb-1 p-0.5' : 'mb-2 p-1.5'} ${status.code === 'finished' ? 'bg-gray-50 border-gray-100 opacity-75' : 'bg-gray-100 border-gray-300'} rounded border`}>
                                             <div className="text-center flex flex-col justify-center h-full">
-                                                <div className={`text-[8px] ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>Start</div>
-                                                <div className={`${isHighDensity ? 'text-base md:text-lg' : 'text-xl md:text-2xl'} font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatShortTime(timings.startTime)}</div>
+                                                <div className={`text-[8px] ${status.code === 'finished' && !exam.isListening ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>Start</div>
+                                                <div className={`${isHighDensity ? 'text-base md:text-lg' : 'text-xl md:text-2xl'} font-mono font-bold ${status.code === 'finished' && !exam.isListening ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatShortTime(timings.startTime)}</div>
                                             </div>
-                                            <div className={`text-center flex flex-col justify-center h-full border-l ${status.code === 'finished' ? 'border-gray-200' : 'border-gray-300'}`}>
-                                                <div className={`text-[8px] ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>Duration</div>
-                                                <div className={`${isHighDensity ? 'text-sm md:text-base' : 'text-lg md:text-xl'} font-mono font-bold ${status.code === 'finished' ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatDuration(timings.writingDuration)}</div>
+                                            <div className={`text-center flex flex-col justify-center h-full border-l ${status.code === 'finished' && !exam.isListening ? 'border-gray-200' : 'border-gray-300'}`}>
+                                                <div className={`text-[8px] ${status.code === 'finished' && !exam.isListening ? 'text-gray-400' : 'text-gray-500'} font-bold uppercase mb-0`}>Duration</div>
+                                                <div className={`${isHighDensity ? 'text-sm md:text-base' : 'text-lg md:text-xl'} font-mono font-bold ${status.code === 'finished' && !exam.isListening ? 'text-gray-400' : 'text-gray-900'} leading-tight`}>{formatDuration(timings.writingDuration)}</div>
                                             </div>
-                                            <div className={`text-center flex flex-col justify-center h-full ${isFinalTwoMinutes ? 'bg-red-600 border border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-[pulse_3s_ease-in-out_infinite] ring-2 ring-red-400 rounded' : `border-l ${status.code === 'finished' ? 'border-gray-200' : 'border-gray-300'}`}`}>
-                                                <div className={`text-[8px] ${isFinalTwoMinutes ? 'text-white font-black' : (status.code === 'finished' ? 'text-gray-400' : 'text-gray-500')} font-bold uppercase mb-0`}>End</div>
-                                                <div className={`${isHighDensity ? 'text-lg md:text-xl' : 'text-3xl md:text-4xl'} font-mono font-black ${isFinalTwoMinutes ? 'text-white' : (status.code === 'finished' ? 'text-gray-400' : 'text-red-600')} leading-tight`}>{formatShortTime(timings.endTime)}</div>
-                                            </div>
+                                            {!exam.isListening && (
+                                                <div className={`text-center flex flex-col justify-center h-full ${isFinalTwoMinutes ? 'bg-red-600 border border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.5)] animate-[pulse_3s_ease-in-out_infinite] ring-2 ring-red-400 rounded' : `border-l ${status.code === 'finished' ? 'border-gray-200' : 'border-gray-300'}`}`}>
+                                                    <div className={`text-[8px] ${isFinalTwoMinutes ? 'text-white font-black' : (status.code === 'finished' ? 'text-gray-400' : 'text-gray-500')} font-bold uppercase mb-0`}>End</div>
+                                                    <div className={`${isHighDensity ? 'text-lg md:text-xl' : 'text-3xl md:text-4xl'} font-mono font-black ${isFinalTwoMinutes ? 'text-white' : (status.code === 'finished' ? 'text-gray-400' : 'text-red-600')} leading-tight`}>{formatShortTime(timings.endTime)}</div>
+                                                </div>
+                                            )}
                                         </div>
 
-                                        <div className="flex gap-2 justify-center">
-                                            <div className={`flex items-center justify-center ${isHighDensity ? 'px-1 py-0.5' : 'px-2 py-1.5'} rounded border font-bold w-1/2 ${style30.container} ${isHighDensity ? '!text-[8px]' : '!text-[10px]'}`}>
-                                                <span className={`${style30.label} mr-1`}>30m:</span>
-                                                <span className={`${style30.time}`}>{formatShortTime(timings.warning30)}</span>
+                                        {!exam.isListening && (
+                                            <div className="flex gap-2 justify-center">
+                                                <div className={`flex items-center justify-center ${isHighDensity ? 'px-1 py-0.5' : 'px-2 py-1.5'} rounded border font-bold w-1/2 ${style30.container} ${isHighDensity ? '!text-[8px]' : '!text-[10px]'}`}>
+                                                    <span className={`${style30.label} mr-1`}>30m:</span>
+                                                    <span className={`${style30.time}`}>{formatShortTime(timings.warning30)}</span>
+                                                </div>
+                                                <div className={`flex items-center justify-center ${isHighDensity ? 'px-1 py-0.5' : 'px-2 py-1.5'} rounded border font-bold w-1/2 ${style05.container} ${isHighDensity ? '!text-[8px]' : '!text-[10px]'}`}>
+                                                    <span className={`${style05.label} mr-1`}>5m:</span>
+                                                    <span className={`${style05.time}`}>{formatShortTime(timings.warning05)}</span>
+                                                </div>
                                             </div>
-                                            <div className={`flex items-center justify-center ${isHighDensity ? 'px-1 py-0.5' : 'px-2 py-1.5'} rounded border font-bold w-1/2 ${style05.container} ${isHighDensity ? '!text-[8px]' : '!text-[10px]'}`}>
-                                                <span className={`${style05.label} mr-1`}>5m:</span>
-                                                <span className={`${style05.time}`}>{formatShortTime(timings.warning05)}</span>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

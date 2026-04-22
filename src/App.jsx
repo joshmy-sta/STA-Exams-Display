@@ -78,6 +78,7 @@ const App = () => {
     hasReadingTime: false, 
     isHidden: false,
     hasRestBreak: false,
+    isListening: false,
     isPaused: false,
     pausedAt: null,
     totalPausedMs: 0
@@ -161,6 +162,7 @@ const App = () => {
               hasReadingTime: true,
               isHidden: false,
               hasRestBreak: false,
+              isListening: false,
               isPaused: false,
               pausedAt: null,
               totalPausedMs: 0
