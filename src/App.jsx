@@ -69,10 +69,44 @@ const App = () => {
   };
   const activeDay = schedule.find(d => d.id === activeDayId) || schedule[0];
   const updateActiveDayExams = (newExams) => setSchedule(schedule.map(d => d.id === activeDayId ? { ...d, exams: newExams } : d));
-  const addExam = () => updateActiveDayExams([...activeDay.exams, { id: Date.now(), subject: "New Subject", startTime: "09:00", duration: 60, readingTime: 0, hasReadingTime: false, isHidden: false }]);
+  const addExam = () => updateActiveDayExams([...activeDay.exams, { 
+    id: Date.now(), 
+    subject: "New Subject", 
+    startTime: "09:00", 
+    duration: 60, 
+    readingTime: 0, 
+    hasReadingTime: false, 
+    isHidden: false,
+    hasRestBreak: false,
+    isPaused: false,
+    pausedAt: null,
+    totalPausedMs: 0
+  }]);
   const removeExam = (examId) => updateActiveDayExams(activeDay.exams.filter(e => e.id !== examId));
   const updateExam = (examId, field, value) => updateActiveDayExams(activeDay.exams.map(e => e.id === examId ? { ...e, [field]: value } : e));
   const toggleHideExam = (examId) => updateActiveDayExams(activeDay.exams.map(e => e.id === examId ? { ...e, isHidden: !e.isHidden } : e));
+
+  const togglePauseExam = (examId) => {
+    updateActiveDayExams(activeDay.exams.map(e => {
+      if (e.id === examId) {
+        const now = new Date().getTime();
+        if (e.isPaused) {
+          // Resuming
+          const pauseDuration = now - new Date(e.pausedAt).getTime();
+          return { 
+            ...e, 
+            isPaused: false, 
+            pausedAt: null, 
+            totalPausedMs: (e.totalPausedMs || 0) + pauseDuration 
+          };
+        } else {
+          // Pausing
+          return { ...e, isPaused: true, pausedAt: new Date().toISOString() };
+        }
+      }
+      return e;
+    }));
+  };
 
   const duplicateExam = (examId, extraTimePercent) => {
     const original = activeDay.exams.find(e => e.id === examId);
@@ -81,7 +115,16 @@ const App = () => {
     const etExams = activeDay.exams.filter(e => /^ET-\d+$/.test(e.subject));
     let maxNum = 0;
     etExams.forEach(e => { const num = parseInt(e.subject.replace('ET-', '')); if (!isNaN(num) && num > maxNum) maxNum = num; });
-    updateActiveDayExams([...activeDay.exams, { ...original, id: Date.now(), subject: `ET-${maxNum + 1}`, duration: newDuration, isHidden: false }]);
+    updateActiveDayExams([...activeDay.exams, { 
+      ...original, 
+      id: Date.now(), 
+      subject: `ET-${maxNum + 1}`, 
+      duration: newDuration, 
+      isHidden: false,
+      isPaused: false,
+      pausedAt: null,
+      totalPausedMs: 0
+    }]);
   };
 
   const handleBulkImport = () => {
@@ -116,7 +159,11 @@ const App = () => {
               duration,
               readingTime: 5,
               hasReadingTime: true,
-              isHidden: false
+              isHidden: false,
+              hasRestBreak: false,
+              isPaused: false,
+              pausedAt: null,
+              totalPausedMs: 0
             });
           }
         }
@@ -178,6 +225,7 @@ const App = () => {
           centerName={centerName}
           currentTime={currentTime}
           activeDay={activeDay}
+          togglePauseExam={togglePauseExam}
         />
       )}
     </div>

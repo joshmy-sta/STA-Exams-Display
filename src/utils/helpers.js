@@ -16,6 +16,21 @@ export const getExamTimings = (exam) => {
     const endTime = new Date(readingEndTime);
     endTime.setMinutes(readingEndTime.getMinutes() + writingDuration);
 
+    // Apply accumulated pause time and current pause duration
+    const now = new Date();
+    let pauseAdjustmentMs = exam.totalPausedMs || 0;
+    if (exam.isPaused && exam.pausedAt) {
+        pauseAdjustmentMs += (now.getTime() - new Date(exam.pausedAt).getTime());
+    }
+
+    if (pauseAdjustmentMs > 0) {
+        endTime.setTime(endTime.getTime() + pauseAdjustmentMs);
+        // If pause adjustment exists, we should probably also shift readingEndTime 
+        // if the pause happened during the reading phase.
+        // For consistency, let's shift everything that's calculated from startTime.
+        readingEndTime.setTime(readingEndTime.getTime() + pauseAdjustmentMs);
+    }
+
     const warning30 = new Date(endTime);
     warning30.setMinutes(endTime.getMinutes() - 30);
 
@@ -27,7 +42,8 @@ export const getExamTimings = (exam) => {
 
 export const getExamStatus = (exam) => {
     const now = new Date();
-    const { startTime, readingEndTime, endTime } = getExamTimings(exam);
+    const timings = getExamTimings(exam);
+    const { startTime, readingEndTime, endTime } = timings;
 
     const formatRemaining = (diffMs) => {
         const totalSecs = Math.max(0, Math.floor(diffMs / 1000));
@@ -59,12 +75,24 @@ export const getExamStatus = (exam) => {
     } else if (exam.hasReadingTime && now < readingEndTime) {
         const diffMs = readingEndTime - now;
         const showMinutesLabel = diffMs > 30 * 60 * 1000 && diffMs <= 60 * 60 * 1000;
-        return { status: 'READING TIME', message: `${formatRemaining(diffMs)} remaining`, color: 'text-amber-600', code: 'reading', showMinutesLabel };
+        return { 
+            status: 'READING TIME', 
+            message: exam.isPaused ? "PAUSED" : `${formatRemaining(diffMs)} remaining`, 
+            color: 'text-amber-600', 
+            code: exam.isPaused ? 'paused' : 'reading', 
+            showMinutesLabel 
+        };
     } else if (now < endTime) {
         const diffMs = endTime - now;
         const showMinutesLabel = diffMs > 30 * 60 * 1000 && diffMs <= 60 * 60 * 1000;
         const color = diffMs <= 5 * 60 * 1000 ? 'text-red-600' : 'text-green-800';
-        return { status: 'WRITING TIME', message: `${formatRemaining(diffMs)} remaining`, color: color, code: 'writing', showMinutesLabel };
+        return { 
+            status: 'WRITING TIME', 
+            message: exam.isPaused ? "PAUSED" : `${formatRemaining(diffMs)} remaining`, 
+            color: exam.isPaused ? 'text-gray-600' : color, 
+            code: exam.isPaused ? 'paused' : 'writing', 
+            showMinutesLabel 
+        };
     } else {
         return { status: 'FINISHED', message: 'Exam Finished', color: 'text-[#003057]', code: 'finished', showMinutesLabel: false };
     }

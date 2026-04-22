@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
-import { Clock, Calendar, Bell } from './Icons';
+import { Clock, Calendar, Bell, Play, Pause } from './Icons';
 import { formatTime, formatDate, formatShortTime, getExamStatus, getExamTimings, getWarningStyles, formatDuration } from '../utils/helpers';
 import logo from '../assets/logo.png';
 
 const ExamBoard = ({
     centerName,
     currentTime,
-    activeDay
+    activeDay,
+    togglePauseExam
 }) => {
     const visibleExams = activeDay.exams
         .filter(e => !e.isHidden)
@@ -142,8 +143,20 @@ const ExamBoard = ({
                                         >
                                             {exam.subject}
                                         </h3>
-                                        <div className={`shrink-0 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${status.code === 'writing' ? 'bg-green-200 text-green-900 border border-green-400' : status.code === 'reading' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
-                                            {status.status}
+                                        <div className="flex flex-col items-end gap-1">
+                                            <div className={`shrink-0 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${status.code === 'writing' ? 'bg-green-200 text-green-900 border border-green-400' : status.code === 'reading' ? 'bg-amber-100 text-amber-800 border border-amber-200' : status.code === 'paused' ? 'bg-gray-100 text-gray-800 border border-gray-300' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+                                                {status.status}
+                                            </div>
+                                            
+                                            {exam.hasRestBreak && ['writing', 'reading', 'paused'].includes(status.code) && (
+                                                <button 
+                                                    onClick={() => togglePauseExam(exam.id)}
+                                                    className={`p-1 rounded-full transition-colors ${exam.isPaused ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300 hover:text-red-500'}`}
+                                                    title={exam.isPaused ? "Resume Exam" : "Pause for Rest Break"}
+                                                >
+                                                    {exam.isPaused ? <Play size={12} fill="currentColor" /> : <Pause size={12} fill="currentColor" />}
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
 
