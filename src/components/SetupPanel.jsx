@@ -336,6 +336,10 @@ const SetupPanel = ({
                                         </button>
                                     </div>
                                     <div className="flex items-center space-x-2">
+                                        <div className="flex items-center space-x-2 mr-4 pr-4 border-r border-gray-200">
+                                            <input type="checkbox" checked={exam.isListening} onChange={(e) => updateExam(exam.id, 'isListening', e.target.checked)} className="h-4 w-4 text-blue-600 rounded" />
+                                            <label className="text-xs text-gray-700">Listening Exam?</label>
+                                        </div>
                                         <span className="text-xs font-bold text-gray-400 uppercase mr-2">Create Extra Time:</span>
                                         <button onClick={() => duplicateExam(exam.id, 25)} className="flex items-center px-2 py-1 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 text-xs font-bold transition"><Copy size={12} className="mr-1" /> +25%</button>
                                         <button onClick={() => duplicateExam(exam.id, 50)} className="flex items-center px-2 py-1 bg-purple-50 text-purple-600 rounded hover:bg-purple-100 text-xs font-bold transition"><Copy size={12} className="mr-1" /> +50%</button>
@@ -354,10 +358,6 @@ const SetupPanel = ({
                                             <div className="flex items-center space-x-2">
                                                 <input type="checkbox" checked={exam.hasRestBreak} onChange={(e) => updateExam(exam.id, 'hasRestBreak', e.target.checked)} className="h-4 w-4 text-blue-600 rounded" />
                                                 <label className="text-xs text-gray-700">Rest Breaks?</label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <input type="checkbox" checked={exam.isListening} onChange={(e) => updateExam(exam.id, 'isListening', e.target.checked)} className="h-4 w-4 text-blue-600 rounded" />
-                                                <label className="text-xs text-gray-700 font-bold">Listening Exam?</label>
                                             </div>
                                         </div>
                                     </div>
