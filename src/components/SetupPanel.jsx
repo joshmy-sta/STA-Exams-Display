@@ -336,6 +336,10 @@ const SetupPanel = ({
                                         </button>
                                     </div>
                                     <div className="flex items-center space-x-2">
+                                        <div className="flex items-center space-x-2 mr-3 pr-3 border-r border-gray-200">
+                                            <input type="checkbox" checked={exam.hasRestBreak} onChange={(e) => updateExam(exam.id, 'hasRestBreak', e.target.checked)} className="h-4 w-4 text-blue-600 rounded" />
+                                            <label className="text-xs text-gray-700">Rest Breaks?</label>
+                                        </div>
                                         <div className="flex items-center space-x-2 mr-4 pr-4 border-r border-gray-200">
                                             <input type="checkbox" checked={exam.isListening} onChange={(e) => updateExam(exam.id, 'isListening', e.target.checked)} className="h-4 w-4 text-blue-600 rounded" />
                                             <label className="text-xs text-gray-700">Listening Exam?</label>
@@ -354,12 +358,6 @@ const SetupPanel = ({
                                     <div className="md:col-span-3">
                                         <div className="flex items-center space-x-2 mb-2"><input type="checkbox" checked={exam.hasReadingTime} onChange={(e) => updateExam(exam.id, 'hasReadingTime', e.target.checked)} className="h-4 w-4 text-blue-600 rounded" /><label className="text-xs text-gray-700">Reading Time?</label></div>
                                         {exam.hasReadingTime && (<div className="flex items-center space-x-2"><input type="number" value={exam.readingTime} onChange={(e) => updateExam(exam.id, 'readingTime', e.target.value)} className="w-16 p-2 border border-gray-300 rounded text-xs" /><span className="text-xs text-gray-500">mins</span></div>)}
-                                        <div className="flex flex-wrap gap-4 mt-2 pt-2 border-t border-gray-100">
-                                            <div className="flex items-center space-x-2">
-                                                <input type="checkbox" checked={exam.hasRestBreak} onChange={(e) => updateExam(exam.id, 'hasRestBreak', e.target.checked)} className="h-4 w-4 text-blue-600 rounded" />
-                                                <label className="text-xs text-gray-700">Rest Breaks?</label>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div className="md:col-span-1 text-center bg-gray-50 p-2 rounded"><div className="text-[10px] text-gray-500 uppercase font-bold">End</div><div className="font-bold text-gray-800 text-sm">{formatShortTime(timings.endTime)}</div></div>
                                 </div>
